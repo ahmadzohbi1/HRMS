@@ -27,7 +27,7 @@ class ShiftRule extends Model
      */
     public function shifts()
     {
-        return $this->belongsToMany(Shift::class, 'shift_has_rule', 'shift_rule_id', 'shift_id')
+        return $this->belongsToMany(Shift::class, 'shift_has_rules', 'shift_rule_id', 'shift_id')
                     ->withTimestamps();
     }
 }
