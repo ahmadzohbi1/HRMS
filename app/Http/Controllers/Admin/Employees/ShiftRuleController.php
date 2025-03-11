@@ -41,7 +41,7 @@ class ShiftRuleController extends Controller
     public function edit($id)
     {
         $shiftRule = ShiftRule::findOrFail($id);
-        return view('admin.shifts_rules.edit', compact('shiftRule'));
+        return view('admin.shift_rules.edit', compact('shiftRule'));
     }
 
     public function update(Request $request, $id)

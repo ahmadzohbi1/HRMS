@@ -20,11 +20,7 @@
     <div class="cust-container">
         <h2 class="text-center mb-4">Employee Time Tracking</h2>
         <div class="row">
-            <!-- @foreach ($shifts as $shift)
-            <td>{{ $shift->first()->time_in ?? 'N/A' }}</td>
-            <tr>{{ $shift->first()->time_out ?? 'N/A' }}</tr>
-            
-            @endforeach -->
+           
             @foreach ($employees as $employee)
                 <div class="col-md-6 col-sm-10 col-xl-3 mb-3">
                     <div class="card text-center p-3">

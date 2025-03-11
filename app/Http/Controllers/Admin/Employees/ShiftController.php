@@ -21,7 +21,8 @@ class ShiftController extends Controller
     {
         $departments = Department::all();  // Get all departments
         $employees = Employee::all();      // Get all employees
-        return view('admin.shifts.create', compact('departments', 'employees'));
+        $shiftRules = ShiftRule::all(); // Get all
+        return view('admin.shifts.create', compact('departments', 'employees','shiftRules'));
     }
 
 

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Employee;
 use App\Models\Employees\TimesheetEmployee;
 use App\Models\Employees\HourRate;
+use App\Models\Warning; // Make sure this model is imported
 use Carbon\Carbon;
 
 class SalaryController extends Controller
@@ -15,8 +16,6 @@ class SalaryController extends Controller
     /**
      * Display a listing of the resource.
      */
-
-
     public function index(Request $request)
     {
         // Get current month and year if not provided in the request
@@ -40,13 +39,13 @@ class SalaryController extends Controller
         return view('admin.salaries.index', compact('salaries', 'month', 'year'));
     }
 
-
     public function updateAllSalaries()
     {
         $employees = Employee::all();
         $updatedCount = 0;
 
         foreach ($employees as $employee) {
+            // Check if there's a deduction warning before updating salary
             $updated = $this->updateEmployeeSalary($employee->id);
             if ($updated) {
                 $updatedCount++;
@@ -58,22 +57,56 @@ class SalaryController extends Controller
 
     private function updateEmployeeSalary($employeeId)
     {
+        // Fetch the employee's total hours for the current month
         $totalHours = TimesheetEmployee::where('employee_id', $employeeId)
             ->where('month', Carbon::now()->format('Y-m'))
             ->value('total_hours_month');
-
+        
+        // Fetch the employee's hour rate
         $hourRate = HourRate::where('employee_id', $employeeId)
             ->value('hour_rate');
-
+        
+        // Check if total hours and hourly rate exist
         if (!$totalHours || !$hourRate) {
             return false;
         }
 
-        list($hours, $minutes, $seconds) = explode(":", $totalHours);
-        $totalHoursNumeric = $hours + ($minutes / 60) + ($seconds / 3600);
-        $salary = $totalHoursNumeric * $hourRate;
+        // Get any warnings that may have a salary deduction impact
+        $warnings = Warning::where('employee_id', $employeeId)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->get();
 
-        $salaryRecord = Salary::updateOrCreate(
+        // Initialize total deduction hours
+        $totalDeductionHours = 0;
+
+        // Calculate deduction hours based on warnings
+        foreach ($warnings as $warning) {
+            // Assuming the warning is related to a deduction (you can add more logic to handle different warning types)
+            $totalDeductionHours += $warning->deduct_hours;  // This assumes you have a 'deduct_hours' column in the Warning model
+        }
+
+        // If there are deduction hours, subtract them from total hours worked
+        if ($totalDeductionHours > 0) {
+            list($hours, $minutes, $seconds) = explode(":", $totalHours);
+            $totalHoursNumeric = $hours + ($minutes / 60) + ($seconds / 3600);
+
+            // Deduct the total deduction hours from the total hours worked
+            $totalHoursNumeric -= $totalDeductionHours;
+
+            // Ensure total hours doesn't go negative
+            $totalHoursNumeric = max(0, $totalHoursNumeric);
+
+            // Recalculate the salary based on the new total hours
+            $salary = $totalHoursNumeric * $hourRate;
+        } else {
+            // If no deduction, simply calculate the salary based on the total hours
+            list($hours, $minutes, $seconds) = explode(":", $totalHours);
+            $totalHoursNumeric = $hours + ($minutes / 60) + ($seconds / 3600);
+            $salary = $totalHoursNumeric * $hourRate;
+        }
+
+        // Update or create the salary record for this employee
+        Salary::updateOrCreate(
             [
                 'employee_id' => $employeeId,
                 'month' => Carbon::now()->format('Y-m'),
@@ -85,32 +118,8 @@ class SalaryController extends Controller
 
         return true;
     }
-    public function show(string $id)
-    {
-
-    }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
-
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-}

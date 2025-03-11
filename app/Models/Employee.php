@@ -50,10 +50,6 @@ class Employee extends Model
     {
         return $this->hasMany(Warning::class);
     }
-    public function shifts()
-    {
-        return $this->belongsToMany(Shift::class, 'employee_has_shifts')
-            ->using(EmployeeHasShifts::class); // Using the custom pivot model
-    }
+    
 
 }

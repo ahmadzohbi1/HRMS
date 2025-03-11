@@ -39,7 +39,7 @@ return new class extends Migration
             $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
             $table->string('warning_title');
             $table->string('warning_type');
-            $table->longText('warning_decsription');
+            $table->longText('warning_description');
             $table->timestamps();
         });
         
