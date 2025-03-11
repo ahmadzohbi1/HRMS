@@ -95,8 +95,8 @@
                 let firstDayOfMonth = moment().year(year).month(month).startOf('month').day();
 
                 calendarHtml += `<div class="month-container">
-                                <h3>${monthName} ${year}</h3>
-                                <div class="month-grid">`;
+                                    <h3>${monthName} ${year}</h3>
+                                    <div class="month-grid">`;
 
                 const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
                 daysOfWeek.forEach(day => {
@@ -119,25 +119,25 @@
                     if (timeLog) {
                         if (isEditMode) {
                             calendarHtml += `
-                            <p><strong>IN:</strong> <input type="time" value="${timeIn}" data-date="${dayDate}" class="time-in-input"></p>
-                            <p><strong>Out:</strong> <input type="time" value="${timeOut}" data-date="${dayDate}" class="time-out-input"></p>
-                            <input type="hidden" value="${timeLog.id}" class="log-id-input">
-                            <input type="hidden" value="${timeLog.employee_id}" class="employee-id-input">
-                            <button class="save-edit-btn btn btn-sm btn-primary" data-date="${dayDate}">Save</button>
-                        `;
+                                <p><strong>IN:</strong> <input type="time" value="${timeIn}" data-date="${dayDate}" class="time-in-input"></p>
+                                <p><strong>Out:</strong> <input type="time" value="${timeOut}" data-date="${dayDate}" class="time-out-input"></p>
+                                <input type="hidden" value="${timeLog.id}" class="log-id-input">
+                                <input type="hidden" value="${timeLog.employee_id}" class="employee-id-input">
+                                <button class="save-edit-btn btn btn-sm btn-primary" data-date="${dayDate}">Save</button>
+                            `;
                         } else {
                             calendarHtml += `
-                            <p><strong>IN:</strong> ${timeIn}</p>
-                            <p><strong>Out:</strong> ${timeOut}</p>
-                        `;
+                                <p><strong>IN:</strong> ${timeIn}</p>
+                                <p><strong>Out:</strong> ${timeOut}</p>
+                            `;
                         }
                     } else {
                         if (isCreateMode) {
                             calendarHtml += `
-                            <p><strong>IN:</strong> <input type="time" class="new-time-in"></p>
-                            <p><strong>Out:</strong> <input type="time" class="new-time-out"></p>
-                            <button class="save-create-btn btn btn-sm btn-success" data-date="${dayDate}">Create</button>
-                        `;
+                                <p><strong>IN:</strong> <input type="time" class="new-time-in"></p>
+                                <p><strong>Out:</strong> <input type="time" class="new-time-out"></p>
+                                <button class="save-create-btn btn btn-sm btn-success" data-date="${dayDate}">Create</button>
+                            `;
                         } else {
                             // Don't display "No data" text for print
                             calendarHtml += '';
@@ -154,13 +154,30 @@
                 document.querySelectorAll('.save-edit-btn').forEach(btn => {
                     btn.addEventListener('click', function () {
                         let date = this.getAttribute('data-date');
-                        let timeIn = document.querySelector(`.time-in-input[data-date="${date}"]`).value;
-                        let timeOut = document.querySelector(`.time-out-input[data-date="${date}"]`).value;
-                        let logId = document.querySelector('.log-id-input').value;
-                        let employeeId = document.querySelector('.employee-id-input').value;
+                        let timeIn = document.querySelector(`.time-in-input[data-date="${date}"]`)?.value || '';
+                        let timeOut = document.querySelector(`.time-out-input[data-date="${date}"]`)?.value || '';
+                        let logIdElement = this.closest('.day-box').querySelector('.log-id-input');
+                        let employeeIdElement = this.closest('.day-box').querySelector('.employee-id-input');
+
+                        if (!logIdElement || !employeeIdElement) {
+                            console.error("Error: Could not find log ID or employee ID elements.");
+                            return;
+                        }
+
+                        let logId = logIdElement.value;
+                        let employeeId = employeeIdElement.value;
+
+                        console.log("Debugging updateTimeLog call:");
+                        console.log("Log ID:", logId);
+                        console.log("Date:", date);
+                        console.log("Time In:", timeIn);
+                        console.log("Time Out:", timeOut);
+                        console.log("Employee ID:", employeeId);
+
                         updateTimeLog(logId, date, timeIn, timeOut, employeeId);
                     });
                 });
+
 
                 document.querySelectorAll('.save-create-btn').forEach(btn => {
                     btn.addEventListener('click', function () {
@@ -177,7 +194,7 @@
                 if (!timeOut) {
                     timeOut = '16:00';
                 }
-                console.log(timelog.id);
+                
                 fetch("{{ route('employee.timelogs.update', ['id' => ':id']) }}".replace(':id', logId), {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
@@ -211,7 +228,7 @@
                     .catch(error => {
                         console.error("Fetch Error:", error);
                     });
-w
+                w
             }
 
             function createTimeLog(date, timeIn, timeOut) {
