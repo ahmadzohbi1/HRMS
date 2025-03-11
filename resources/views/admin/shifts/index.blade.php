@@ -61,16 +61,20 @@
                                             {{ $shift->employee->name ?? 'N/A' }}
                                         @endif
                                     </td>
-
                                     <td>
                                         <a href="{{ route('shifts.edit', $shift->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                    
-                                    <a href="{{ route('shifts.rules.show', $shift->id) }}" class="btn btn-primary btn-sm">View
-                                        Rules</a>
+                                        <a href="{{ route('shifts.rules.show', $shift->id) }}"
+                                            class="btn btn-primary btn-sm">View Rules</a>
+
+                                        <!-- Delete Button with Confirmation -->
+                                        <form action="{{ route('shifts.destroy', $shift->id) }}" method="POST"
+                                            style="display:inline;"
+                                            onsubmit="return confirm('Are you sure you want to delete this shift?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                        </form>
                                     </td>
-
-
-
                                 </tr>
                             @endforeach
                         </tbody>

@@ -159,7 +159,7 @@ Route::group(["prefix" => 'dashboard'], function () {
             Route::get('/shifts/{shift}/edit', [ShiftController::class, 'edit'])->name('shifts.edit');
             Route::put('/shifts/{shift}', [ShiftController::class, 'update'])->name('shifts.update');
             Route::get('/shifts/{shift}/rules', [ShiftController::class, 'showRules'])->name('shifts.rules.show');
-
+            Route::delete('/shifts/{shift}', [ShiftController::class, 'destroy'])->name('shifts.destroy');
             Route::post('/shifts', [ShiftController::class, 'store'])->name('shifts.store');
             Route::get('/shifts', [ShiftController::class, 'index'])->name('shifts.index');
 

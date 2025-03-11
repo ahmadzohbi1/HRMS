@@ -281,116 +281,112 @@ class TimeSheetController extends Controller
     }
 
     private function updateTimesheetEmployee($employeeId, $month, $year)
-{
-    // Get all time logs for the specified month and year
-    $timeLogs = TimeLog::where('employee_id', $employeeId)
-        ->whereMonth('date', $month)
-        ->whereYear('date', $year)
-        ->get();
+    {
+        // Get all time logs for the specified month and year
+        $timeLogs = TimeLog::where('employee_id', $employeeId)
+            ->whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->get();
 
-    // Initialize total time in seconds
-    $totalSeconds = 0;
+        // Initialize total time in seconds
+        $totalSeconds = 0;
 
-    foreach ($timeLogs as $log) {
-        if ($log->time_in && $log->time_out) {
-            $timeIn = Carbon::parse($log->time_in);
-            $timeOut = Carbon::parse($log->time_out);
-            // Add the duration in seconds
-            $totalSeconds += $timeIn->diffInSeconds($timeOut);
-        }
-    }
-
-    // Check for any warnings related to time deductions for the employee
-    $warnings = Warning::where('employee_id', $employeeId)
-        ->where('warning_title', 'Late Arrival')
-        ->orWhere('warning_title', 'Early Checkout')
-        ->get();
-
-    // Initialize the deduction in hours (in seconds)
-    $totalDeductionSeconds = 0;
-
-    foreach ($warnings as $warning) {
-        // If the warning involves time deduction, subtract the hours from total time
-        if ($warning->warning_title === 'Late Arrival' && $warning->deduct_hours) {
-            $totalDeductionSeconds += $warning->day_hours_deduction * 3600; // Convert hours to seconds
+        foreach ($timeLogs as $log) {
+            if ($log->time_in && $log->time_out) {
+                $timeIn = Carbon::parse($log->time_in);
+                $timeOut = Carbon::parse($log->time_out);
+                // Add the duration in seconds
+                $totalSeconds += $timeIn->diffInSeconds($timeOut);
+            }
         }
 
-        if ($warning->warning_title === 'Early Checkout' && $warning->deduct_hours) {
-            $totalDeductionSeconds += $warning->day_hours_deduction * 3600; // Convert hours to seconds
+        // Check for any warnings related to time deductions for the employee
+        $warnings = Warning::where('employee_id', $employeeId)
+            ->where('warning_title', 'Late Arrival')
+            ->orWhere('warning_title', 'Early Checkout')
+            ->get();
+
+        // Initialize the deduction in hours (in seconds)
+        $totalDeductionSeconds = 0;
+
+        foreach ($warnings as $warning) {
+            // If the warning involves time deduction, subtract the hours from total time
+            if ($warning->warning_title === 'Late Arrival' && $warning->deduct_hours) {
+                $totalDeductionSeconds += $warning->day_hours_deduction * 3600; // Convert hours to seconds
+            }
+
+            if ($warning->warning_title === 'Early Checkout' && $warning->deduct_hours) {
+                $totalDeductionSeconds += $warning->day_hours_deduction * 3600; // Convert hours to seconds
+            }
+        }
+
+        // Apply deduction to the total time (if any)
+        $totalSeconds = max(0, $totalSeconds - $totalDeductionSeconds); // Avoid negative time
+
+        // Convert total seconds to hours, minutes, and seconds
+        $hours = floor($totalSeconds / 3600);
+        $minutes = floor(($totalSeconds % 3600) / 60);
+        $seconds = $totalSeconds % 60;
+
+        // Format as HH:MM:SS
+        $totalTime = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+
+        // Find or create a timesheet entry for the employee
+        $timesheetEmployee = TimesheetEmployee::updateOrCreate(
+            [
+                'employee_id' => $employeeId,
+                'month' => Carbon::createFromDate($year, $month, 1)->format('Y-m'),
+            ],
+            [
+                'total_hours_month' => $totalTime,
+            ]
+        );
+
+        // Optionally, update salary after updating timesheet
+        $this->updateSalary($employeeId);
+    }
+
+    public function updateSalary($employeeId)
+    {
+        $totalHours = TimesheetEmployee::where('employee_id', $employeeId)
+            ->where('month', Carbon::now()->format('Y-m'))
+            ->value('total_hours_month');
+
+        $hourRate = HourRate::where('employee_id', $employeeId)
+            ->value('hour_rate');
+
+        $totalHours = $totalHours ?? '00:00:00';
+        $hourRate = $hourRate ?? 0;
+
+        \Log::info("Total Hours: $totalHours");
+        \Log::info("Hourly Rate: $hourRate");
+
+        list($hours, $minutes, $seconds) = explode(":", $totalHours);
+
+        $totalHoursNumeric = $hours + ($minutes / 60) + ($seconds / 3600);
+
+        \Log::info("Total Hours Numeric: $totalHoursNumeric");
+
+        $salary = $totalHoursNumeric * $hourRate;
+
+        \Log::info("Calculated Salary: $salary");
+
+        $salaryEmployeeExist = Salary::where('employee_id', $employeeId)
+            ->where('month', Carbon::now()->format('Y-m'))
+            ->first();
+
+        if ($salaryEmployeeExist) {
+            $salaryEmployeeExist->update([
+                'salary' => $salary,
+            ]);
+        } else {
+            Salary::create([
+                'employee_id' => $employeeId,
+                'salary' => $salary,
+                'month' => Carbon::now()->format('Y-m'),
+            ]);
         }
     }
-
-    // Apply deduction to the total time (if any)
-    $totalSeconds = max(0, $totalSeconds - $totalDeductionSeconds); // Avoid negative time
-
-    // Convert total seconds to hours, minutes, and seconds
-    $hours = floor($totalSeconds / 3600);
-    $minutes = floor(($totalSeconds % 3600) / 60);
-    $seconds = $totalSeconds % 60;
-
-    // Format as HH:MM:SS
-    $totalTime = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
-
-    // Find or create a timesheet entry for the employee
-    $timesheetEmployee = TimesheetEmployee::updateOrCreate(
-        [
-            'employee_id' => $employeeId,
-            'month' => Carbon::createFromDate($year, $month, 1)->format('Y-m'),
-        ],
-        [
-            'total_hours_month' => $totalTime,
-        ]
-    );
-
-    // Optionally, update salary after updating timesheet
-    $this->updateSalary($employeeId);
-}
-
-public function updateSalary($employeeId)
-{
-    $totalHours = TimesheetEmployee::where('employee_id', $employeeId)
-        ->where('month', Carbon::now()->format('Y-m'))
-        ->value('total_hours_month');
-
-    $hourRate = HourRate::where('employee_id', $employeeId)
-        ->value('hour_rate');
-
-    $totalHours = $totalHours ?? '00:00:00';
-    $hourRate = $hourRate ?? 0;
-
-    \Log::info("Total Hours: $totalHours");
-    \Log::info("Hourly Rate: $hourRate");
-
-    list($hours, $minutes, $seconds) = explode(":", $totalHours);
-
-    $totalHoursNumeric = $hours + ($minutes / 60) + ($seconds / 3600);
-
-    \Log::info("Total Hours Numeric: $totalHoursNumeric");
-
-    $salary = $totalHoursNumeric * $hourRate;
-
-    \Log::info("Calculated Salary: $salary");
-
-    $salaryEmployeeExist = Salary::where('employee_id', $employeeId)
-        ->where('month', Carbon::now()->format('Y-m'))
-        ->first();
-
-    if ($salaryEmployeeExist) {
-        $salaryEmployeeExist->update([
-            'salary' => $salary,
-        ]);
-    } else {
-        Salary::create([
-            'employee_id' => $employeeId,
-            'salary' => $salary,
-            'month' => Carbon::now()->format('Y-m'),
-        ]);
-    }
-}
-
-
-
-
     public function getTimeLogs(Request $request)
     {
         $employeeIds = $request->input('employee_ids');
