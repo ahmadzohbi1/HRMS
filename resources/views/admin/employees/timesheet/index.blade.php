@@ -60,13 +60,13 @@
 @section('script')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script>
-       document.addEventListener('DOMContentLoaded', function () {
-        const employeesTime = @json($employees_time);
-        const employeeId = @json($id); // Pass the ID directly to JavaScript
-        let currentMonth = moment().month();
-        let currentYear = moment().year();
-        let isEditMode = false;
-        let isCreateMode = false;
+        document.addEventListener('DOMContentLoaded', function () {
+            const employeesTime = @json($employees_time);
+            const employeeId = @json($id); // Pass the ID directly to JavaScript
+            let currentMonth = moment().month();
+            let currentYear = moment().year();
+            let isEditMode = false;
+            let isCreateMode = false;
 
             document.getElementById('edit-mode').addEventListener('click', () => {
                 isEditMode = !isEditMode;
@@ -95,8 +95,8 @@
                 let firstDayOfMonth = moment().year(year).month(month).startOf('month').day();
 
                 calendarHtml += `<div class="month-container">
-                        <h3>${monthName} ${year}</h3>
-                        <div class="month-grid">`;
+                                <h3>${monthName} ${year}</h3>
+                                <div class="month-grid">`;
 
                 const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
                 daysOfWeek.forEach(day => {
@@ -119,25 +119,25 @@
                     if (timeLog) {
                         if (isEditMode) {
                             calendarHtml += `
-                    <p><strong>IN:</strong> <input type="time" value="${timeIn}" data-date="${dayDate}" class="time-in-input"></p>
-                    <p><strong>Out:</strong> <input type="time" value="${timeOut}" data-date="${dayDate}" class="time-out-input"></p>
-                    <input type="hidden" value="${timeLog.id}" class="log-id-input">
-                    <input type="hidden" value="${timeLog.employee_id}" class="employee-id-input">
-                    <button class="save-edit-btn btn btn-sm btn-primary" data-date="${dayDate}">Save</button>
-                `;
+                            <p><strong>IN:</strong> <input type="time" value="${timeIn}" data-date="${dayDate}" class="time-in-input"></p>
+                            <p><strong>Out:</strong> <input type="time" value="${timeOut}" data-date="${dayDate}" class="time-out-input"></p>
+                            <input type="hidden" value="${timeLog.id}" class="log-id-input">
+                            <input type="hidden" value="${timeLog.employee_id}" class="employee-id-input">
+                            <button class="save-edit-btn btn btn-sm btn-primary" data-date="${dayDate}">Save</button>
+                        `;
                         } else {
                             calendarHtml += `
-                    <p><strong>IN:</strong> ${timeIn}</p>
-                    <p><strong>Out:</strong> ${timeOut}</p>
-                `;
+                            <p><strong>IN:</strong> ${timeIn}</p>
+                            <p><strong>Out:</strong> ${timeOut}</p>
+                        `;
                         }
                     } else {
                         if (isCreateMode) {
                             calendarHtml += `
-                    <p><strong>IN:</strong> <input type="time" class="new-time-in"></p>
-                    <p><strong>Out:</strong> <input type="time" class="new-time-out"></p>
-                    <button class="save-create-btn btn btn-sm btn-success" data-date="${dayDate}">Create</button>
-                `;
+                            <p><strong>IN:</strong> <input type="time" class="new-time-in"></p>
+                            <p><strong>Out:</strong> <input type="time" class="new-time-out"></p>
+                            <button class="save-create-btn btn btn-sm btn-success" data-date="${dayDate}">Create</button>
+                        `;
                         } else {
                             // Don't display "No data" text for print
                             calendarHtml += '';
@@ -173,6 +173,11 @@
             }
 
             function updateTimeLog(logId, date, timeIn, timeOut, employeeId) {
+                // Set time_out to 16:00 if empty
+                if (!timeOut) {
+                    timeOut = '16:00';
+                }
+                console.log(timelog.id);
                 fetch("{{ route('employee.timelogs.update', ['id' => ':id']) }}".replace(':id', logId), {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
@@ -182,27 +187,39 @@
                         time_out: timeOut,
                         employee_id: employeeId
                     })
-                }).then(response => response.json()).then(data => {
-                    if (data.message === 'Time Log updated successfully') {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Time Log updated successfully!',
-                            timer: 1500,
-                            willClose: () => {
-                                generateCalendar(currentMonth, currentYear);
-                            }
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: data.message,
-                        });
-                    }
-                });
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Response Data:", data);
+                        if (data.message === 'Time Log updated successfully') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Time Log updated successfully!',
+                                timer: 1500,
+                                willClose: () => {
+                                    generateCalendar(currentMonth, currentYear);
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: data.message,
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Fetch Error:", error);
+                    });
+w
             }
 
             function createTimeLog(date, timeIn, timeOut) {
+                // Set time_out to 16:00 if empty
+                if (!timeOut) {
+                    timeOut = '16:00';
+                }
+
                 fetch("{{ route('employee.timelogs.store', ['id' => $id]) }}", {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
@@ -231,6 +248,7 @@
                     }
                 });
             }
+
 
             generateCalendar(currentMonth, currentYear);
         });
