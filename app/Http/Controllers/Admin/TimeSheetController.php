@@ -32,14 +32,18 @@ class TimeSheetController extends Controller
     public function update(Request $request, $id)
     {
         // Retrieve the timelog entry by its ID and employee_id
-        $timeLog = TimeLog::where('id', $id)->where('employee_id', $request->employee_id)->first();
+        $timeLog = TimeLog::where('id', $id)->first();
 
         if ($timeLog) {
             // Update time log with the new data
             $timeLog->update([
-                'date' => $request->date,
                 'time_in' => $request->time_in,
                 'time_out' => $request->time_out
+            ]);
+            Log::info('Update Request Data:', [
+                'time_in' => $request->time_in,
+                'time_out' => $request->time_out,
+                
             ]);
 
             return response()->json(['message' => 'Time Log updated successfully']);
