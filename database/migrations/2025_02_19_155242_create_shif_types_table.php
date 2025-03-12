@@ -19,8 +19,6 @@ return new class extends Migration {
             $table->foreignId('employee_id')->nullable()->constrained('employees')->onDelete('set null'); // Employee relationship
             $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('set null'); // Department relationship
             $table->boolean('company_shift')->default(false); // For company-wide shifts
-            // Ensure 'shift_id' column is properly referencing 'id' in 'shift_rules'
-            $table->foreignId('shift_id')->nullable()->constrained('shift_rules')->onDelete('set null');
             $table->timestamps();
         });
     }
