@@ -11,7 +11,7 @@
             <h1 id="year-display">{{ now()->year }}</h1>
         </div>
 
-        <h2>Employee Timesheet - Year</h2>
+        <h2>{{ $employee->name }}'s Timesheet - {{ now()->year }}</h2>
 
         <!-- Link to the external CSS file -->
         <link href="{{ asset('assets/css/timesheet.css') }}" rel="stylesheet" />
