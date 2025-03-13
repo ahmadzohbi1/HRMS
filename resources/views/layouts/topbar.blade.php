@@ -19,11 +19,11 @@
 
                  <a href="{{ route('root') }}" class="logo logo-light">
                     <span class="logo-sm">
-                        <img src="{{ asset('assets/images/Logo-White.png') }}" alt="" class=""
+                        <img src="{{ asset('assets/images/Logo-Whitee.png') }}" alt="" class=""
                             height="30">
                     </span>
                     <span class="logo-lg">
-                        <img src="{{ asset('/assets/images/Logo-White.png') }}" alt="" class=""
+                        <img src="{{ asset('/assets/images/Logo-Whitee.png') }}" alt="" class=""
                             height="40">
                     </span>
                 </a>
