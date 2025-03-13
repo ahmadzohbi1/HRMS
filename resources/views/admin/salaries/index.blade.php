@@ -102,7 +102,7 @@
                         </a>
                     </div>
                     <div class="d-flex justify-content-end mb-4 mt-4" id="action_btns">
-                        <form action="{{ route('timesheet.updateAllHours') }}" method="POST">
+                        <form action="{{ route('employee.timelogs.updateAllHours') }}" method="POST">
                             @csrf
                             <input type="hidden" name="month" value="{{ $selectedMonth }}">
                             <input type="hidden" name="year" value="{{ $selectedYear }}">

@@ -63,7 +63,7 @@
                                     </td>
                                     <td>
                                         <a href="{{ route('shifts.edit', $shift->id) }}" class="btn btn-warning btn-md">Edit</a>
-                                        <a href="{{ route('shifts.rules.show', $shift->id) }}"
+                                        <a href="{{ route('shifts.show', $shift->id) }}"
                                             class="btn btn-primary btn-md">View Rules</a>
 
                                         <!-- Delete Button with Confirmation -->
