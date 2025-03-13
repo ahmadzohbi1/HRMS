@@ -48,7 +48,7 @@
                     <li>
                         <a href="{{ route('departments.index') }}" class="waves-effect">
                             <i class="bx bx-building"></i>
-                            <span key="t-contact">Departmens</span>
+                            <span key="t-contact">Departments</span>
                         </a>
                     </li>
                 @endcan
