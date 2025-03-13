@@ -44,7 +44,6 @@
                         </thead>
                         <tbody>
                             @foreach ($department as $data)
-
                                 <tr>
                                     <td>{{ $data->id }}</td>
                                     <td>{{ $data->name }}</td>

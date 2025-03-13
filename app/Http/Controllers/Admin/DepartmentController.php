@@ -20,8 +20,6 @@ class DepartmentController extends Controller
         return view('admin.departments.index', compact('department'));
         
     }
-
-
     /**
      * Show the form for creating a new resource.
      */
