@@ -11,7 +11,7 @@ use App\Models\ShiftRule;
 class Shift extends Model
 {
     use HasFactory;
-
+    protected $table = 'shifts';
     protected $fillable = [
         'shift_name',
         'time_in',

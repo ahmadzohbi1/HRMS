@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin\Employees;
 
 use App\Models\Employees\Shift;
-use App\Models\Employee;
 use App\Models\ShiftRule;
+use App\Models\Employee;
 use App\Models\Department;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -14,22 +14,17 @@ class ShiftController extends Controller
 {
     public function index()
     {
-        $shifts = Shift::with('shiftRules')->get();
+        $shifts = Shift::all();
         return view('admin.shifts.index', compact('shifts'));
     }
     public function create()
     {
-        $departments = Department::all();  // Get all departments
-        $employees = Employee::all();      // Get all employees
-        $shiftRules = ShiftRule::all(); // Get all
-        return view('admin.shifts.create', compact('departments', 'employees', 'shiftRules'));
+        $departments = Department::all();
+        $employees = Employee::all();
+        return view('admin.shifts.create', compact('departments', 'employees'));
     }
-
-
     public function store(Request $request)
     {
-
-        // Validate input fields
         $request->validate([
             'shift_name' => 'required|string|max:255',
             'time_in' => 'required|date_format:H:i',
@@ -37,7 +32,6 @@ class ShiftController extends Controller
             'department_id' => 'nullable|exists:departments,id',
             'employee_id' => 'nullable|exists:employees,id',
         ]);
-
         $shift = new Shift([
             'shift_name' => $request->shift_name,
             'time_in' => $request->time_in,
@@ -45,17 +39,12 @@ class ShiftController extends Controller
             'shift_type' => $request->shift_type,
         ]);
 
-        // Handle department shift
         if ($request->shift_type == 'department') {
             $shift->department_id = $request->department_id;
         }
-
-        // Handle employee shift
         if ($request->shift_type == 'employee') {
             $shift->employee_id = $request->employee_id;
         }
-
-        // Handle company-wide shift
         if ($request->shift_type == 'company') {
             $shift->company_shift = true;
         }
@@ -64,83 +53,53 @@ class ShiftController extends Controller
 
         return redirect()->route('shifts.index')->with('success', 'Shift created successfully!');
     }
-    // In ShiftController.php
 
     public function edit($shiftId)
     {
-        // Retrieve the shift by ID
         $shift = Shift::findOrFail($shiftId);
-        $departments = Department::all();  // Get all departments
-        $employees = Employee::all();      // Get all employees
-        $shiftRules = ShiftRule::all(); // Get all
+        $departments = Department::all();
+        $employees = Employee::all();
+        $shiftRules = ShiftRule::all(); // Get all shift rules
+
         return view('admin.shifts.edit', compact('shift', 'departments', 'employees', 'shiftRules'));
     }
-
     public function update(Request $request, Shift $shift)
-{
-    // Validate input fields
-    $request->validate([
-        'shift_name' => 'required|string|max:255',
-        'time_in' => 'required|date_format:H:i',
-        'time_out' => 'required|date_format:H:i',
-        'shift_type' => 'required|in:company,department,employee',
-        'department_id' => 'nullable|required_if:shift_type,department|exists:departments,id',
-        'employee_id' => 'nullable|required_if:shift_type,employee|exists:employees,id',
-    ]);
-
-    // Update the shift details
-    $shift->shift_name = $request->shift_name;
-    $shift->time_in = $request->time_in;
-    $shift->time_out = $request->time_out;
-    $shift->shift_type = $request->shift_type;
-
-    // Reset department and employee fields to avoid conflicts
-    $shift->department_id = null;
-    $shift->employee_id = null;
-    $shift->company_shift = false;
-
-    // Handle department shift
-    if ($request->shift_type == 'department') {
-        $shift->department_id = $request->department_id;
-    }
-
-    // Handle employee shift
-    if ($request->shift_type == 'employee') {
-        $shift->employee_id = $request->employee_id;
-    }
-
-    // Handle company-wide shift
-    if ($request->shift_type == 'company') {
-        $shift->company_shift = true;
-    }
-
-    // Save the updated shift
-    $shift->save();
-
-    // Sync shift rules (if any selected)
-    if ($request->has('shift_rules')) {
-        $shift->shiftRules()->sync($request->shift_rules);
-    }
-
-    return redirect()->route('shifts.index')->with('success', 'Shift updated successfully!');
-}
-
-    public function showRules($shiftId)
     {
-        $shift = Shift::with('shiftRules')->findOrFail($shiftId); // Fetch shift with its rules
-        return view('admin.shifts.rules.show', compact('shift'));
+        $request->validate([
+            'shift_name' => 'required|string|max:255',
+            'time_in' => 'required|date_format:H:i',
+            'time_out' => 'required|date_format:H:i',
+            'shift_type' => 'required|in:company,department,employee',
+            'department_id' => 'nullable|required_if:shift_type,department|exists:departments,id',
+            'employee_id' => 'nullable|required_if:shift_type,employee|exists:employees,id',
+            'shift_rules' => 'nullable|array',
+            'shift_rules.*' => 'exists:shift_rules,id'
+        ]);
+
+        $shift->update([
+            'shift_name' => $request->shift_name,
+            'time_in' => $request->time_in,
+            'time_out' => $request->time_out,
+            'shift_type' => $request->shift_type,
+            'department_id' => $request->shift_type == 'department' ? $request->department_id : null,
+            'employee_id' => $request->shift_type == 'employee' ? $request->employee_id : null,
+            'company_shift' => $request->shift_type == 'company',
+        ]);
+
+        // Sync shift rules (update pivot table)
+        $shift->shiftRules()->sync($request->shift_rules ?? []);
+
+        return redirect()->route('shifts.index')->with('success', 'Shift updated successfully!');
     }
+
+
     public function destroy($id)
     {
-        // Find the shift by its ID
         $shift = Shift::findOrFail($id);
-
-        // Delete the shift
         $shift->delete();
-
-        // Redirect back with a success message
         return redirect()->route('shifts.index')->with('success', 'Shift deleted successfully.');
     }
+
 
 
 }
