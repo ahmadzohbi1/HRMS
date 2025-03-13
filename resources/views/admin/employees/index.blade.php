@@ -54,17 +54,17 @@
                                     <td>{{ $employee->position->name ?? 'N/A' }}</td>
                                     <td>
                                         <a href="{{ route('employees.department.index', $employee->id) }}"
-                                            class="btn btn-sm btn-secondary">Departments</a>
+                                            class="btn btn-md btn-secondary">Departments</a>
                                     </td>
                                     <td>
                                         <a href="{{ route('employee.timelogs.index', $employee->id) }}"
-                                            class="btn btn-sm btn-primary">Timesheet</a>
+                                            class="btn btn-md btn-primary">Timesheet</a>
                                     </td>
                                     <td>
                                         <a href="{{ route('employees.show', $employee->id) }}"
-                                            class="btn btn-info btn-sm me-2">View</a>
+                                            class="btn btn-info btn-md me-2">View</a>
                                         <a href="{{ route('employees.edit', $employee->id) }}"
-                                            class="btn btn-warning btn-sm">Edit</a>
+                                            class="btn btn-warning btn-md">Edit</a>
                                     </td>
                                 </tr>
                             @endforeach

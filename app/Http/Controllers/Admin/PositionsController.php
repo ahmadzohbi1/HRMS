@@ -42,9 +42,36 @@ class PositionsController extends Controller
             return back()->with('error', 'An error occurred while adding the department.');
         }
     }
-    public function delete($id){
-        $position = Position::find($id);
-        $position->delete();
+    public function edit($id)
+    {
+        $position = Position::findOrFail($id);
+        return view('admin.positions.edit', compact('position'));
+    }
+    public function update(Request $request, $id){
+        $request->validate([
+            'name' => 'required|string|max:255|unique:positions,name,'. $id,
+        ]);
+
+        try {
+            Position::find($id)->update([
+                'name' => $request->name,
+                'updated_at' => now()
+            ]);
+
+            return redirect()->route('positions.index')->with('success', 'Position updated successfully!');
+        } catch (\Exception $e) {
+            Log::error('Error updating position', [
+               'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+
+            return back()->with('error', 'An error occurred while updating the position.');
+        }
+    }
+    public function delete($id)
+    {
+        $position = Position::find($id)->delete();
         return redirect()->route('positions.index')->with('success', 'Position deleted successfully!');
     }
 

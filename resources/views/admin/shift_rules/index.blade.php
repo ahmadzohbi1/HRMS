@@ -42,7 +42,7 @@
                                 <th>Shift Name</th>
                                 <th>Time In Max</th>
                                 <th>Rule Type</th>
-                                
+
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -58,12 +58,20 @@
                                             Deducted from Salary
                                         @elseif($data->deduct_hours == 0)
                                             Warning
-                                            @endif
+                                        @endif
                                     </td>
-                                    
+
                                     <td>
-                                        <a href="{{ route('shifts-rules.edit',($data->id)) }}" class="btn btn-warning btn-sm">Edit</a>
-                                        <a href="" class="btn btn-primary btn-sm">View</a>
+                                        <a href="{{ route('shifts-rules.edit', ($data->id)) }}"
+                                            class="btn btn-warning btn-md">Edit</a>
+                                        <a href="" class="btn btn-primary btn-md">View</a>
+                                        <form action="{{ route('shifts-rules.destroy', $data->id) }}" method="POST"
+                                            style="display:inline;"
+                                            onsubmit="return confirm('Are you sure you want to delete this shift?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-md">Delete</button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach

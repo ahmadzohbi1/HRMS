@@ -55,5 +55,11 @@ class HourRateController extends Controller
 
         return redirect()->route('hour_rate.index')->with('success', 'Hour rate updated successfully');
     }
+    public function destroy($id)
+    {
+        $hourRate = HourRate::findOrFail($id)->delete();
+
+        return redirect()->route('hour_rate.index')->with('success', 'Hour rate deleted successfully');
+    }
 
 }

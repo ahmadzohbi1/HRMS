@@ -26,7 +26,7 @@ class ShiftRuleController extends Controller
             'warning_text' => 'nullable|string|max:500',
         ]);
 
-        $shiftRule = ShiftRule::create([
+        ShiftRule::create([
             'shift_title' => $request->shift_name,
             'time_in_apply' => $request->time_in_after,
             'time_out_apply' => $request->time_out_after,
@@ -41,7 +41,7 @@ class ShiftRuleController extends Controller
     public function edit($id)
     {
         $shiftRule = ShiftRule::findOrFail($id);
-        return view('admin.shifts_rules.edit', compact('shiftRule'));
+        return view('admin.shift_rules.edit', compact('shiftRule'));
     }
 
     public function update(Request $request, $id)
@@ -66,6 +66,10 @@ class ShiftRuleController extends Controller
         ]);
 
         return redirect()->route('shifts-rules.index')->with('success', 'Shift Rule updated successfully.');
+    }
+    public function destroy($id){
+        ShiftRule::find($id)->delete();
+        return redirect()->route('shifts-rules.index');
     }
 
 

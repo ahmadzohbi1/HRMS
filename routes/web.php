@@ -140,6 +140,9 @@ Route::group(["prefix" => 'dashboard'], function () {
                 Route::put('/{id}', [DepartmentController::class, 'update'])
                     ->middleware('permission:edit departments')
                     ->name('update');
+                Route::delete('/{id}/delete', [DepartmentController::class, 'destroy'])
+                    ->middleware('permission:delete')
+                    ->name('destroy');
             });
             /////////////// TimeSheet Controller routes //////////////////
 
@@ -175,12 +178,17 @@ Route::group(["prefix" => 'dashboard'], function () {
                 Route::post('/', [PositionsController::class, 'store'])
                     ->middleware('permission:create positions')
                     ->name('store');
+                Route::get('/{id}', [PositionsController::class, 'edit'])
+                    ->middleware('permission:edit positions')
+                    ->name('edit');
+                Route::post('/update/{id}', [PositionsController::class, 'update'])
+                    ->middleware('permission:edit positions')
+                    ->name('update');
                 Route::delete('/delete/{id}', [PositionsController::class, 'delete'])
                     ->middleware('permission:delete positions')
                     ->name('delete');
 
-                // Route::get('/{id}/edit', [DepartmentController::class, 'edit'])->name('edit');
-                // Route::put('/{id}', [DepartmentController::class, 'update'])->name('update');
+                
             });
             Route::prefix('hour_rate')->name('hour_rate.')->group(function () {
                 Route::get('/', [HourRateController::class, 'index'])
@@ -198,6 +206,9 @@ Route::group(["prefix" => 'dashboard'], function () {
                 Route::put('/{id}', [HourRateController::class, 'update'])
                     ->middleware('permission:edit hour_rate')
                     ->name('update');
+                Route::delete('/{id}/delete', [HourRateController::class, 'destroy'])
+                    ->middleware('permission:delete hour_rate')
+                    ->name('destroy');
             });
 
             Route::prefix('salaries')->name('salary.')->group(function () {
@@ -226,6 +237,7 @@ Route::group(["prefix" => 'dashboard'], function () {
                 Route::post('/store', [ShiftRuleController::class, 'store'])->name('store');
                 Route::get('/{id}/edit', [ShiftRuleController::class, 'edit'])->name('edit');
                 Route::put('/{id}', [ShiftRuleController::class, 'update'])->name('update');
+                Route::delete('/{id}/delete', [ShiftRuleController::class, 'destroy'])->name('destroy');
                 
 
             });

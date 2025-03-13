@@ -34,7 +34,7 @@ class SalaryController extends Controller
         }
 
         // Paginate the results (10 per page)
-        $salaries = $query->paginate(10);
+        $salaries = $query->paginate(15);
 
         return view('admin.salaries.index', compact('salaries', 'month', 'year'));
     }

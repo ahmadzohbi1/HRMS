@@ -14,36 +14,11 @@ class DepartmentController extends Controller
      * Display a listing of the resource.
      */
 
-    public function index(Request $request)
+    public function index()
     {
-        if ($request->ajax()) {
-            try {
-                $data = Department::select(['id', 'name', 'created_at'])->get();
-
-                return DataTables::of($data)
-                    ->addIndexColumn()
-                    ->setRowClass(fn($row) => 'align-middle')
-                    ->editColumn('created_at', fn($row) => $row->created_at->format('Y-m-d H:i:s'))
-                    ->addColumn('action', function ($row) {
-                        return '<div class="d-flex">
-                                    <a href="' . route('departments.edit', $row->id) . '" class="btn btn-sm btn-warning me-1">Edit</a>
-                                </div>';
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-            } catch (\Exception $e) {
-                // Log the error
-                Log::error('AJAX Error in DepartmentController@index', [
-                    'message' => $e->getMessage(),
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
-                    'trace' => $e->getTraceAsString()
-                ]);
-
-                return response()->json(['error' => 'An error occurred while fetching the data. Check logs for details.'], 500);
-            }
-        }
-        return view('admin.departments.index');
+        $department = Department::all();
+        return view('admin.departments.index', compact('department'));
+        
     }
 
 
@@ -115,6 +90,10 @@ class DepartmentController extends Controller
 
             return back()->with('error', 'An error occurred while updating the department.');
         }
+    }
+    public function destroy($id){
+        Department::findOrFail($id)->delete();
+        return redirect()->route('departments.index')->with('success', 'Department deleted successfully!');
     }
 
 }

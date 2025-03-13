@@ -45,12 +45,14 @@
                                     <td>{{$data->id}}</td>
                                     <td>{{$data->name}}</td>
                                     <td>{{$data->created_at}}</td>
-                                    <td>
+                                    <td style="display: flex;">
+                                        <a href="{{ route('positions.edit', ($data->id)) }}"
+                                            class="btn btn-warning">Edit</a>
 
                                         <form action="{{ route('positions.delete', $data->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger">
+                                            <button style="margin-left:5px" type="submit" class="btn btn-danger">
                                                 <i></i> Delete
                                             </button>
                                         </form>

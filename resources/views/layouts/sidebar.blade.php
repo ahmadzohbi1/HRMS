@@ -84,7 +84,7 @@
                         </a>
                     </li>
                 @endcan
-                @can('view shifts')
+                @can('view shift_rules')
                     <li>
                         <a href="{{ route('shifts-rules.index') }}" class="waves-effect">
                             <i class="bx bx-hourglass"></i>
@@ -92,7 +92,7 @@
                         </a>
                     </li>
                 @endcan
-                @can('view shifts')
+                @can('view warnings')
                     <li>
                         <a href="{{ route('warnings.index') }}" class="waves-effect">
                             <i class="bx bx-info-circle"></i>
@@ -100,11 +100,19 @@
                         </a>
                     </li>
                 @endcan
-                @can('view shifts')
+                @can('view vacations')
                     <li>
                         <a href="{{ route('warnings.index') }}" class="waves-effect">
                             <i class="bx bx-sun"></i>
                             <span key="t-contact">Vacations</span>
+                        </a>
+                    </li>
+                @endcan
+                @can('view holidays')
+                    <li>
+                        <a href="{{ route('warnings.index') }}" class="waves-effect">
+                            <i class="bx bx-sun"></i>
+                            <span key="t-contact">Holidays</span>
                         </a>
                     </li>
                 @endcan

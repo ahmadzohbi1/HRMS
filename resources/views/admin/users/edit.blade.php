@@ -140,7 +140,7 @@ Edit Admin
                             <!-- Submit Button -->
                             <div class="row justify-content-end">
                                 <div class="col-sm-9">
-                                    <button class="btn btn-primary" type="submit">@lang('buttons.submit')</button>
+                                    <button class="btn btn-primary" type="submit">Submit</button>
                                 </div>
                             </div>
 

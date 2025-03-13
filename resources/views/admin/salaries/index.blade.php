@@ -113,7 +113,7 @@
                     </div>
                     
                     <!-- Laravel Pagination Links -->
-                    <div class="d-flex justify-content-center mt-3">
+                    <div id="paginate_emp" class="d-flex justify-content-center mt-3">
                         {{ $salaries->appends(['month' => $selectedMonth, 'year' => $selectedYear])->links() }}
                     </div>
 
@@ -136,3 +136,16 @@
         });
     </script>
 @endsection
+
+<style >
+     #paginate_emp{
+        text-align: center;
+    }
+    #paginate_emp svg{
+        width: 20px;
+    }
+    #paginate_emp .text-sm{
+        margin-top: 2rem;
+    }
+   
+</style>

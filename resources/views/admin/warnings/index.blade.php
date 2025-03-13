@@ -54,8 +54,15 @@
                                     <td>{{ $data->warning_description }}</td>
                                     <td>{{ $data->created_at }}</td>
                                     <td>
-                                        <a href="{{ route('warnings.edit',$data->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                        <a href="{{ route('warnings.show',$data->id) }}" class="btn btn-primary btn-sm">Show</a>
+                                        <a href="{{ route('warnings.edit',$data->id) }}" class="btn btn-warning btn-md">Edit</a>
+                                        <a href="{{ route('warnings.show',$data->id) }}" class="btn btn-primary btn-md">Show</a>
+                                        <form action="{{ route('warnings.destroy', $data->id) }}" method="POST"
+                                            style="display:inline;"
+                                            onsubmit="return confirm('Are you sure you want to delete this warning?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-md">Delete</button>
+                                        </form>
                                     </td>
                                 </tr>
                            @endforeach

@@ -62,9 +62,9 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="{{ route('shifts.edit', $shift->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                        <a href="{{ route('shifts.edit', $shift->id) }}" class="btn btn-warning btn-md">Edit</a>
                                         <a href="{{ route('shifts.rules.show', $shift->id) }}"
-                                            class="btn btn-primary btn-sm">View Rules</a>
+                                            class="btn btn-primary btn-md">View Rules</a>
 
                                         <!-- Delete Button with Confirmation -->
                                         <form action="{{ route('shifts.destroy', $shift->id) }}" method="POST"
@@ -72,7 +72,7 @@
                                             onsubmit="return confirm('Are you sure you want to delete this shift?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                            <button type="submit" class="btn btn-danger btn-md">Delete</button>
                                         </form>
                                     </td>
                                 </tr>
