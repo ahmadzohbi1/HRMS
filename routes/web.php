@@ -148,7 +148,7 @@ Route::group(["prefix" => 'dashboard'], function () {
                     ->middleware('permission:edit departments')
                     ->name('update');
                 Route::delete('/{id}/delete', [DepartmentController::class, 'destroy'])
-                    ->middleware('permission:delete')
+                    ->middleware('permission:delete departments')
                     ->name('destroy');
             });
             /* ================== Positions ROUTES ================== */

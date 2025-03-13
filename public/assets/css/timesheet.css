@@ -32,7 +32,8 @@
 }
 
 .day-header {
-    font-weight: bold;
+    font-size: 20px !important;
+    font-weight: 400;
     background-color: #667eea;
     color: white;
     padding: 10px;

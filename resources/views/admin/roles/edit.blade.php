@@ -60,6 +60,10 @@ Edit Roles
                                             'hour_rate' => 'Hour Rate Permissions',
                                             'salaries' => 'Salaries Permissions',
                                             'shifts' => 'Shifts Permissions',
+                                            'shift_rules' => 'Shift_Rules Permissions',
+                                            'warnings' => 'Warnings Permissions',
+                                            'vacations' => 'Vacations Permissions',
+                                            'holidays' => 'Holidays Permissions',
 
                                         ];
                                         @endphp

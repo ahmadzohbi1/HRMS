@@ -45,7 +45,6 @@ Departments
                                 value="{{ old('name', $department->name) }}" required>
                         </div>
                     </div>
-
                     <!-- Submit Button -->
                     <div class="row justify-content-end">
                         <div class="col-sm-9">

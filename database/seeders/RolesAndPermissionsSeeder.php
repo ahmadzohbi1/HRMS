@@ -65,31 +65,31 @@ class RolesAndPermissionsSeeder extends Seeder
             'edit salaries',
             'update salaries',
             'delete salaries',
-            // salaries shifts
+            // Shifts permissions
             'view shifts',
             'create shifts',
             'edit shifts',
             'update shifts',
             'delete shifts',
-            // salaries shifts rules
+            // Shift_Rules permissions
             'view shift_rules',
             'create shift_rules',
             'edit shift_rules',
             'update shift_rules',
             'delete shift_rules',
-            // salaries warnings
+            // Warnings permissions
             'view warnings',
             'create warnings',
             'edit warnings',
             'update warnings',
             'delete warnings',
-             // salaries warnings
+             // Vacations permissions
              'view vacations',
              'create vacations',
              'edit vacations',
              'update vacations',
              'delete vacations',
-             // salaries warnings
+             // Holidays permissions
              'view holidays',
              'create holidays',
              'edit holidays',
