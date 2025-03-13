@@ -19,12 +19,13 @@
 
                  <a href="{{ route('root') }}" class="logo logo-light">
                     <span class="logo-sm">
-                        <img src="{{ asset('assets/images/Logo-Whitee.png') }}" alt="" class=""
-                            height="30">
+                        <!-- <img src="{{ asset('assets/images/Logo-Whitee.png') }}" alt="" class=""
+                            height="30"> -->
                     </span>
                     <span class="logo-lg">
-                        <img src="{{ asset('/assets/images/Logo-Whitee.png') }}" alt="" class=""
-                            height="40">
+                        <!-- <img src="{{ asset('/assets/images/Logo-Whitee.png') }}" alt="" class=""
+                            height="40"> -->
+                            <h1 style="color:white;font-size:50px;margin-top: 1rem">GMS</h1>
                     </span>
                 </a>
 
