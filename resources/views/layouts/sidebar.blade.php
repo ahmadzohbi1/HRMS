@@ -102,7 +102,7 @@
                 @endcan
                 @can('view vacations')
                     <li>
-                        <a href="{{ route('warnings.index') }}" class="waves-effect">
+                        <a href="{{ route('vacations.index') }}" class="waves-effect">
                             <i class="bx bx-sun"></i>
                             <span key="t-contact">Vacations</span>
                         </a>

@@ -13,7 +13,8 @@ use App\Http\Controllers\Admin\{
     DepartmentController,
     EmployeeController,
     PositionsController,
-    TimeSheetController
+    TimeSheetController,
+    VacationController
 };
 use App\Http\Controllers\Admin\Employees\{
     HourRateController,
@@ -66,7 +67,7 @@ Route::group(["prefix" => 'dashboard'], function () {
                 Route::put('{user}', [AdminsController::class, 'update'])
                     ->middleware('permission:edit admins')
                     ->name('update');
-                
+
                 Route::post('toggle-ban', [AdminsController::class, 'toggleBan'])
                     ->name('toggle-ban');
             });
@@ -116,20 +117,20 @@ Route::group(["prefix" => 'dashboard'], function () {
                     ->name('department.index');
             });
             /* ================== TimeLogs ROUTES ================== */
-                Route::prefix('employee')->name('employee.timelogs.')->group(function () {
-                    Route::get('/{id}/timelogs', [TimeSheetController::class, 'show_employee_timesheet'])
-                        ->middleware('permission:view employees')
-                        ->name('index');
-                    Route::post('/{id}/timelogs/update', [TimeSheetController::class, 'update'])
-                        ->middleware('permission:edit employees')
-                        ->name('update');
-                    Route::post('/{id}/timelogs/store', [TimeSheetController::class, 'store'])
-                        ->middleware('permission:create employees')
-                        ->name('store');
-                    Route::post('/timesheet/update-all-hours', [TimeSheetController::class, 'updateAllHours'])
-                        ->middleware('permission:edit employees')
-                        ->name('updateAllHours');
-                });
+            Route::prefix('employee')->name('employee.timelogs.')->group(function () {
+                Route::get('/{id}/timelogs', [TimeSheetController::class, 'show_employee_timesheet'])
+                    ->middleware('permission:view employees')
+                    ->name('index');
+                Route::post('/{id}/timelogs/update', [TimeSheetController::class, 'update'])
+                    ->middleware('permission:edit employees')
+                    ->name('update');
+                Route::post('/{id}/timelogs/store', [TimeSheetController::class, 'store'])
+                    ->middleware('permission:create employees')
+                    ->name('store');
+                Route::post('/timesheet/update-all-hours', [TimeSheetController::class, 'updateAllHours'])
+                    ->middleware('permission:edit employees')
+                    ->name('updateAllHours');
+            });
             /* ================== Departments ROUTES ================== */
             Route::prefix('departments')->name('departments.')->group(function () {
                 Route::get('/', [DepartmentController::class, 'index'])
@@ -170,7 +171,7 @@ Route::group(["prefix" => 'dashboard'], function () {
                     ->name('update');
                 Route::delete('/delete/{id}', [PositionsController::class, 'delete'])
                     ->middleware('permission:delete positions')
-                    ->name('delete'); 
+                    ->name('delete');
             });
             /* ================== Hour_Rate ROUTES ================== */
             Route::prefix('hour_rate')->name('hour_rate.')->group(function () {
@@ -224,7 +225,7 @@ Route::group(["prefix" => 'dashboard'], function () {
                     ->name('destroy');
                 Route::get('/{shift}/rules', [ShiftController::class, 'showRules'])
                     ->middleware('permission:view shifts')
-                    ->name('show'); 
+                    ->name('show');
             });
             /* ================== Shift_Rules ROUTES ================== */
             Route::prefix('shifts-rules')->name('shifts-rules.')->group(function () {
@@ -271,6 +272,31 @@ Route::group(["prefix" => 'dashboard'], function () {
                     ->middleware('permission:delete warnings')
                     ->name('destroy');
             });
+            /* ================== Vacations ROUTES ================== */
+            Route::prefix('vacations')->name('vacations.')->group(function () {
+                Route::get('/', [VacationController::class, 'index'])
+                    ->middleware('permission:view vacations')
+                    ->name('index');
+                Route::get('/create', [VacationController::class, 'create'])
+                    ->middleware('permission:create vacations')
+                    ->name('create');
+                Route::post('/', [VacationController::class, 'store'])
+                    ->middleware('permission:create vacations')
+                    ->name('store');
+                Route::get('/{id}', [VacationController::class, 'show'])
+                    ->middleware('permission:view vacations')
+                    ->name('show');
+                Route::get('/{id}/edit', [VacationController::class, 'edit'])
+                    ->middleware('permission:edit vacations')
+                    ->name('edit');
+                Route::put('/{id}', [VacationController::class, 'update'])
+                    ->middleware('permission:edit vacations')
+                    ->name('update');
+                Route::delete('/{id}', [VacationController::class, 'destroy'])
+                    ->middleware('permission:delete vacations')
+                    ->name('destroy');
+            });
+
         });
     });
 });
