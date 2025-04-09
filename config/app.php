@@ -53,9 +53,9 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://office.energica.com.lb'),
+    // 'url' => env('APP_URL', 'https://office.energica.com.lb'),
 
-    'asset_url' => env('ASSET_URL', 'https://office.energica.com.lb/public'),
+    // 'asset_url' => env('ASSET_URL', 'https://office.energica.com.lb/public'),
 
     /*
     |--------------------------------------------------------------------------

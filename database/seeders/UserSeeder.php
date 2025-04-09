@@ -19,13 +19,13 @@ class UserSeeder extends Seeder
         //admin 
         User::firstOrCreate(
             [
-                "email" => "admin@energica.com.lb",
+                "email" => "demo@admin.com",
                 "name" => "Super Admin",
                 "phone" => '',
             ],
             [
                 'is_admin' => true,
-                "password" => bcrypt("admin",)
+                "password" => bcrypt("password",)
             ]
         );
 

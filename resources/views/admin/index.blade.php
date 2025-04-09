@@ -6,7 +6,8 @@
 
 @section('css')
     <!-- Lightbox css -->
-    <link href="/assets/libs/magnific-popup/magnific-popup.min.css" rel="stylesheet" type="text/css" />
+    <link href="{{ URL::asset('assets/ibs/magnific-popup/magnific-popup.min.css') }}" rel="stylesheet" type="text/css" />
+    {{ URL::asset('assets/ibs/magnific-popup/magnific-popup.min.css') }}
 @endsection
 
 @section('content')
