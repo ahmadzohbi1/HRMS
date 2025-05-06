@@ -1,0 +1,182 @@
+[06-May-2025 05:18:41 America/Boise] PHP Fatal error:  Uncaught RuntimeException: A facade root has not been set. in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php:358
+Stack trace:
+#0 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/RegisterErrorViewPaths.php(17): Illuminate\Support\Facades\Facade::__callStatic('replaceNamespac...', Array)
+#1 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(915): Illuminate\Foundation\Exceptions\RegisterErrorViewPaths->__invoke()
+#2 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(890): Illuminate\Foundation\Exceptions\Handler->registerErrorViewPaths()
+#3 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(815): Illuminate\Foundation\Exceptions\Handler->renderHttpException(Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#4 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(706): Illuminate\Foundation\Exceptions\Handler->prepareResponse(Object(Illuminate\Http\Request), Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#5 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(594): Illuminate\Foundation\Exceptions\Handler->renderExceptionResponse(Object(Illuminate\Http\Request), Object(ParseError))
+#6 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(575): Illuminate\Foundation\Exceptions\Handler->render(Object(Illuminate\Http\Request), Object(ParseError))
+#7 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(149): Illuminate\Foundation\Http\Kernel->renderException(Object(Illuminate\Http\Request), Object(ParseError))
+#8 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1193): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#9 /home3/vagaryte/office.utopialebanon.org/index.php(17): Illuminate\Foundation\Application->handleRequest(Object(Illuminate\Http\Request))
+#10 {main}
+  thrown in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php on line 358
+[06-May-2025 05:18:48 America/Boise] PHP Fatal error:  Uncaught RuntimeException: A facade root has not been set. in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php:358
+Stack trace:
+#0 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/RegisterErrorViewPaths.php(17): Illuminate\Support\Facades\Facade::__callStatic('replaceNamespac...', Array)
+#1 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(915): Illuminate\Foundation\Exceptions\RegisterErrorViewPaths->__invoke()
+#2 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(890): Illuminate\Foundation\Exceptions\Handler->registerErrorViewPaths()
+#3 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(815): Illuminate\Foundation\Exceptions\Handler->renderHttpException(Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#4 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(706): Illuminate\Foundation\Exceptions\Handler->prepareResponse(Object(Illuminate\Http\Request), Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#5 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(594): Illuminate\Foundation\Exceptions\Handler->renderExceptionResponse(Object(Illuminate\Http\Request), Object(ParseError))
+#6 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(575): Illuminate\Foundation\Exceptions\Handler->render(Object(Illuminate\Http\Request), Object(ParseError))
+#7 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(149): Illuminate\Foundation\Http\Kernel->renderException(Object(Illuminate\Http\Request), Object(ParseError))
+#8 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1193): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#9 /home3/vagaryte/office.utopialebanon.org/index.php(17): Illuminate\Foundation\Application->handleRequest(Object(Illuminate\Http\Request))
+#10 {main}
+  thrown in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php on line 358
+[06-May-2025 05:18:51 America/Boise] PHP Fatal error:  Uncaught RuntimeException: A facade root has not been set. in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php:358
+Stack trace:
+#0 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/RegisterErrorViewPaths.php(17): Illuminate\Support\Facades\Facade::__callStatic('replaceNamespac...', Array)
+#1 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(915): Illuminate\Foundation\Exceptions\RegisterErrorViewPaths->__invoke()
+#2 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(890): Illuminate\Foundation\Exceptions\Handler->registerErrorViewPaths()
+#3 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(815): Illuminate\Foundation\Exceptions\Handler->renderHttpException(Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#4 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(706): Illuminate\Foundation\Exceptions\Handler->prepareResponse(Object(Illuminate\Http\Request), Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#5 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(594): Illuminate\Foundation\Exceptions\Handler->renderExceptionResponse(Object(Illuminate\Http\Request), Object(ParseError))
+#6 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(575): Illuminate\Foundation\Exceptions\Handler->render(Object(Illuminate\Http\Request), Object(ParseError))
+#7 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(149): Illuminate\Foundation\Http\Kernel->renderException(Object(Illuminate\Http\Request), Object(ParseError))
+#8 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1193): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#9 /home3/vagaryte/office.utopialebanon.org/index.php(17): Illuminate\Foundation\Application->handleRequest(Object(Illuminate\Http\Request))
+#10 {main}
+  thrown in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php on line 358
+[06-May-2025 05:19:02 America/Boise] PHP Fatal error:  Uncaught RuntimeException: A facade root has not been set. in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php:358
+Stack trace:
+#0 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/RegisterErrorViewPaths.php(17): Illuminate\Support\Facades\Facade::__callStatic('replaceNamespac...', Array)
+#1 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(915): Illuminate\Foundation\Exceptions\RegisterErrorViewPaths->__invoke()
+#2 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(890): Illuminate\Foundation\Exceptions\Handler->registerErrorViewPaths()
+#3 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(815): Illuminate\Foundation\Exceptions\Handler->renderHttpException(Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#4 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(706): Illuminate\Foundation\Exceptions\Handler->prepareResponse(Object(Illuminate\Http\Request), Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#5 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(594): Illuminate\Foundation\Exceptions\Handler->renderExceptionResponse(Object(Illuminate\Http\Request), Object(ParseError))
+#6 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(575): Illuminate\Foundation\Exceptions\Handler->render(Object(Illuminate\Http\Request), Object(ParseError))
+#7 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(149): Illuminate\Foundation\Http\Kernel->renderException(Object(Illuminate\Http\Request), Object(ParseError))
+#8 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1193): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#9 /home3/vagaryte/office.utopialebanon.org/index.php(17): Illuminate\Foundation\Application->handleRequest(Object(Illuminate\Http\Request))
+#10 {main}
+  thrown in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php on line 358
+[06-May-2025 05:19:04 America/Boise] PHP Fatal error:  Uncaught RuntimeException: A facade root has not been set. in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php:358
+Stack trace:
+#0 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/RegisterErrorViewPaths.php(17): Illuminate\Support\Facades\Facade::__callStatic('replaceNamespac...', Array)
+#1 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(915): Illuminate\Foundation\Exceptions\RegisterErrorViewPaths->__invoke()
+#2 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(890): Illuminate\Foundation\Exceptions\Handler->registerErrorViewPaths()
+#3 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(815): Illuminate\Foundation\Exceptions\Handler->renderHttpException(Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#4 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(706): Illuminate\Foundation\Exceptions\Handler->prepareResponse(Object(Illuminate\Http\Request), Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#5 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(594): Illuminate\Foundation\Exceptions\Handler->renderExceptionResponse(Object(Illuminate\Http\Request), Object(ParseError))
+#6 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(575): Illuminate\Foundation\Exceptions\Handler->render(Object(Illuminate\Http\Request), Object(ParseError))
+#7 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(149): Illuminate\Foundation\Http\Kernel->renderException(Object(Illuminate\Http\Request), Object(ParseError))
+#8 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1193): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#9 /home3/vagaryte/office.utopialebanon.org/index.php(17): Illuminate\Foundation\Application->handleRequest(Object(Illuminate\Http\Request))
+#10 {main}
+  thrown in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php on line 358
+[06-May-2025 05:19:46 America/Boise] PHP Fatal error:  Uncaught RuntimeException: A facade root has not been set. in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php:358
+Stack trace:
+#0 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/RegisterErrorViewPaths.php(17): Illuminate\Support\Facades\Facade::__callStatic('replaceNamespac...', Array)
+#1 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(915): Illuminate\Foundation\Exceptions\RegisterErrorViewPaths->__invoke()
+#2 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(890): Illuminate\Foundation\Exceptions\Handler->registerErrorViewPaths()
+#3 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(815): Illuminate\Foundation\Exceptions\Handler->renderHttpException(Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#4 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(706): Illuminate\Foundation\Exceptions\Handler->prepareResponse(Object(Illuminate\Http\Request), Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#5 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(594): Illuminate\Foundation\Exceptions\Handler->renderExceptionResponse(Object(Illuminate\Http\Request), Object(ParseError))
+#6 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(575): Illuminate\Foundation\Exceptions\Handler->render(Object(Illuminate\Http\Request), Object(ParseError))
+#7 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(149): Illuminate\Foundation\Http\Kernel->renderException(Object(Illuminate\Http\Request), Object(ParseError))
+#8 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1193): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#9 /home3/vagaryte/office.utopialebanon.org/index.php(17): Illuminate\Foundation\Application->handleRequest(Object(Illuminate\Http\Request))
+#10 {main}
+  thrown in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php on line 358
+[06-May-2025 05:25:21 America/Boise] PHP Fatal error:  Uncaught RuntimeException: A facade root has not been set. in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php:358
+Stack trace:
+#0 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/RegisterErrorViewPaths.php(17): Illuminate\Support\Facades\Facade::__callStatic('replaceNamespac...', Array)
+#1 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(915): Illuminate\Foundation\Exceptions\RegisterErrorViewPaths->__invoke()
+#2 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(890): Illuminate\Foundation\Exceptions\Handler->registerErrorViewPaths()
+#3 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(815): Illuminate\Foundation\Exceptions\Handler->renderHttpException(Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#4 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(706): Illuminate\Foundation\Exceptions\Handler->prepareResponse(Object(Illuminate\Http\Request), Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#5 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(594): Illuminate\Foundation\Exceptions\Handler->renderExceptionResponse(Object(Illuminate\Http\Request), Object(ParseError))
+#6 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(575): Illuminate\Foundation\Exceptions\Handler->render(Object(Illuminate\Http\Request), Object(ParseError))
+#7 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(149): Illuminate\Foundation\Http\Kernel->renderException(Object(Illuminate\Http\Request), Object(ParseError))
+#8 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1193): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#9 /home3/vagaryte/office.utopialebanon.org/index.php(17): Illuminate\Foundation\Application->handleRequest(Object(Illuminate\Http\Request))
+#10 {main}
+  thrown in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php on line 358
+[06-May-2025 05:25:27 America/Boise] PHP Fatal error:  Uncaught RuntimeException: A facade root has not been set. in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php:358
+Stack trace:
+#0 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/RegisterErrorViewPaths.php(17): Illuminate\Support\Facades\Facade::__callStatic('replaceNamespac...', Array)
+#1 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(915): Illuminate\Foundation\Exceptions\RegisterErrorViewPaths->__invoke()
+#2 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(890): Illuminate\Foundation\Exceptions\Handler->registerErrorViewPaths()
+#3 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(815): Illuminate\Foundation\Exceptions\Handler->renderHttpException(Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#4 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(706): Illuminate\Foundation\Exceptions\Handler->prepareResponse(Object(Illuminate\Http\Request), Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#5 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(594): Illuminate\Foundation\Exceptions\Handler->renderExceptionResponse(Object(Illuminate\Http\Request), Object(ParseError))
+#6 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(575): Illuminate\Foundation\Exceptions\Handler->render(Object(Illuminate\Http\Request), Object(ParseError))
+#7 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(149): Illuminate\Foundation\Http\Kernel->renderException(Object(Illuminate\Http\Request), Object(ParseError))
+#8 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1193): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#9 /home3/vagaryte/office.utopialebanon.org/index.php(17): Illuminate\Foundation\Application->handleRequest(Object(Illuminate\Http\Request))
+#10 {main}
+  thrown in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php on line 358
+[06-May-2025 05:25:29 America/Boise] PHP Fatal error:  Uncaught RuntimeException: A facade root has not been set. in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php:358
+Stack trace:
+#0 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/RegisterErrorViewPaths.php(17): Illuminate\Support\Facades\Facade::__callStatic('replaceNamespac...', Array)
+#1 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(915): Illuminate\Foundation\Exceptions\RegisterErrorViewPaths->__invoke()
+#2 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(890): Illuminate\Foundation\Exceptions\Handler->registerErrorViewPaths()
+#3 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(815): Illuminate\Foundation\Exceptions\Handler->renderHttpException(Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#4 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(706): Illuminate\Foundation\Exceptions\Handler->prepareResponse(Object(Illuminate\Http\Request), Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#5 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(594): Illuminate\Foundation\Exceptions\Handler->renderExceptionResponse(Object(Illuminate\Http\Request), Object(ParseError))
+#6 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(575): Illuminate\Foundation\Exceptions\Handler->render(Object(Illuminate\Http\Request), Object(ParseError))
+#7 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(149): Illuminate\Foundation\Http\Kernel->renderException(Object(Illuminate\Http\Request), Object(ParseError))
+#8 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1193): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#9 /home3/vagaryte/office.utopialebanon.org/index.php(17): Illuminate\Foundation\Application->handleRequest(Object(Illuminate\Http\Request))
+#10 {main}
+  thrown in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php on line 358
+[06-May-2025 05:33:56 America/Boise] PHP Fatal error:  Uncaught RuntimeException: A facade root has not been set. in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php:358
+Stack trace:
+#0 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/RegisterErrorViewPaths.php(17): Illuminate\Support\Facades\Facade::__callStatic('replaceNamespac...', Array)
+#1 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(915): Illuminate\Foundation\Exceptions\RegisterErrorViewPaths->__invoke()
+#2 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(890): Illuminate\Foundation\Exceptions\Handler->registerErrorViewPaths()
+#3 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(815): Illuminate\Foundation\Exceptions\Handler->renderHttpException(Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#4 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(706): Illuminate\Foundation\Exceptions\Handler->prepareResponse(Object(Illuminate\Http\Request), Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#5 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(594): Illuminate\Foundation\Exceptions\Handler->renderExceptionResponse(Object(Illuminate\Http\Request), Object(ParseError))
+#6 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(575): Illuminate\Foundation\Exceptions\Handler->render(Object(Illuminate\Http\Request), Object(ParseError))
+#7 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(149): Illuminate\Foundation\Http\Kernel->renderException(Object(Illuminate\Http\Request), Object(ParseError))
+#8 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1193): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#9 /home3/vagaryte/office.utopialebanon.org/index.php(17): Illuminate\Foundation\Application->handleRequest(Object(Illuminate\Http\Request))
+#10 {main}
+  thrown in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php on line 358
+[06-May-2025 05:33:59 America/Boise] PHP Fatal error:  Uncaught RuntimeException: A facade root has not been set. in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php:358
+Stack trace:
+#0 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/RegisterErrorViewPaths.php(17): Illuminate\Support\Facades\Facade::__callStatic('replaceNamespac...', Array)
+#1 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(915): Illuminate\Foundation\Exceptions\RegisterErrorViewPaths->__invoke()
+#2 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(890): Illuminate\Foundation\Exceptions\Handler->registerErrorViewPaths()
+#3 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(815): Illuminate\Foundation\Exceptions\Handler->renderHttpException(Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#4 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(706): Illuminate\Foundation\Exceptions\Handler->prepareResponse(Object(Illuminate\Http\Request), Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#5 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(594): Illuminate\Foundation\Exceptions\Handler->renderExceptionResponse(Object(Illuminate\Http\Request), Object(ParseError))
+#6 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(575): Illuminate\Foundation\Exceptions\Handler->render(Object(Illuminate\Http\Request), Object(ParseError))
+#7 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(149): Illuminate\Foundation\Http\Kernel->renderException(Object(Illuminate\Http\Request), Object(ParseError))
+#8 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1193): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#9 /home3/vagaryte/office.utopialebanon.org/index.php(17): Illuminate\Foundation\Application->handleRequest(Object(Illuminate\Http\Request))
+#10 {main}
+  thrown in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php on line 358
+[06-May-2025 05:33:59 America/Boise] PHP Fatal error:  Uncaught RuntimeException: A facade root has not been set. in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php:358
+Stack trace:
+#0 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/RegisterErrorViewPaths.php(17): Illuminate\Support\Facades\Facade::__callStatic('replaceNamespac...', Array)
+#1 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(915): Illuminate\Foundation\Exceptions\RegisterErrorViewPaths->__invoke()
+#2 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(890): Illuminate\Foundation\Exceptions\Handler->registerErrorViewPaths()
+#3 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(815): Illuminate\Foundation\Exceptions\Handler->renderHttpException(Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#4 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(706): Illuminate\Foundation\Exceptions\Handler->prepareResponse(Object(Illuminate\Http\Request), Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#5 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(594): Illuminate\Foundation\Exceptions\Handler->renderExceptionResponse(Object(Illuminate\Http\Request), Object(ParseError))
+#6 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(575): Illuminate\Foundation\Exceptions\Handler->render(Object(Illuminate\Http\Request), Object(ParseError))
+#7 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(149): Illuminate\Foundation\Http\Kernel->renderException(Object(Illuminate\Http\Request), Object(ParseError))
+#8 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1193): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#9 /home3/vagaryte/office.utopialebanon.org/index.php(17): Illuminate\Foundation\Application->handleRequest(Object(Illuminate\Http\Request))
+#10 {main}
+  thrown in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php on line 358
+[06-May-2025 05:42:08 America/Boise] PHP Fatal error:  Uncaught RuntimeException: A facade root has not been set. in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php:358
+Stack trace:
+#0 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/RegisterErrorViewPaths.php(17): Illuminate\Support\Facades\Facade::__callStatic('replaceNamespac...', Array)
+#1 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(915): Illuminate\Foundation\Exceptions\RegisterErrorViewPaths->__invoke()
+#2 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(890): Illuminate\Foundation\Exceptions\Handler->registerErrorViewPaths()
+#3 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(815): Illuminate\Foundation\Exceptions\Handler->renderHttpException(Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#4 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(706): Illuminate\Foundation\Exceptions\Handler->prepareResponse(Object(Illuminate\Http\Request), Object(Symfony\Component\HttpKernel\Exception\HttpException))
+#5 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/Handler.php(594): Illuminate\Foundation\Exceptions\Handler->renderExceptionResponse(Object(Illuminate\Http\Request), Object(ParseError))
+#6 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(575): Illuminate\Foundation\Exceptions\Handler->render(Object(Illuminate\Http\Request), Object(ParseError))
+#7 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(149): Illuminate\Foundation\Http\Kernel->renderException(Object(Illuminate\Http\Request), Object(ParseError))
+#8 /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1193): Illuminate\Foundation\Http\Kernel->handle(Object(Illuminate\Http\Request))
+#9 /home3/vagaryte/office.utopialebanon.org/index.php(17): Illuminate\Foundation\Application->handleRequest(Object(Illuminate\Http\Request))
+#10 {main}
+  thrown in /home3/vagaryte/office.utopialebanon.org/vendor/laravel/framework/src/Illuminate/Support/Facades/Facade.php on line 358
