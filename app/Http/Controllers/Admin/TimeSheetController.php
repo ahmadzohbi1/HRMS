@@ -31,19 +31,22 @@ class TimeSheetController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Retrieve the timelog entry by its ID and employee_id
+        // Retrieve the timelog entry by its ID
         $timeLog = TimeLog::where('id', $id)->first();
 
         if ($timeLog) {
-            // Update time log with the new data
-            $timeLog->update([
+            // Prepare data for update - allow null for time_out
+            $updateData = [
                 'time_in' => $request->time_in,
-                'time_out' => $request->time_out
-            ]);
+                'time_out' => $request->time_out ?: null // Set to null if empty
+            ];
+
+            // Update time log with the new data
+            $timeLog->update($updateData);
+
             Log::info('Update Request Data:', [
                 'time_in' => $request->time_in,
                 'time_out' => $request->time_out,
-                
             ]);
 
             return response()->json(['message' => 'Time Log updated successfully']);
@@ -54,16 +57,16 @@ class TimeSheetController extends Controller
 
     public function store(Request $request, $id)
     {
-        // Validate the request data
+        // Validate the request data - make time_out nullable
         $validatedData = $request->validate([
             'date' => 'required|date',
             'time_in' => 'required|date_format:H:i',
-            'time_out' => 'required|date_format:H:i',
+            'time_out' => 'nullable|date_format:H:i', // Changed to nullable
         ]);
 
         // Log the incoming request data for debugging
         \Log::info('Store TimeLog Request Data:', [
-            'employee_id' => $id, // Use the ID from the URL
+            'employee_id' => $id,
             'date' => $validatedData['date'],
             'time_in' => $validatedData['time_in'],
             'time_out' => $validatedData['time_out'],
@@ -76,12 +79,12 @@ class TimeSheetController extends Controller
             return response()->json(['error' => 'Employee not found'], 404);
         }
 
-        // Create the time log for the employee with the ID from the URL
+        // Create the time log - time_out can be null
         $timeLog = TimeLog::create([
-            'employee_id' => $id, // Use the ID from the URL
+            'employee_id' => $id,
             'date' => $validatedData['date'],
             'time_in' => $validatedData['time_in'],
-            'time_out' => $validatedData['time_out'],
+            'time_out' => $validatedData['time_out'] ?: null, // Allow null
         ]);
 
         // Log the newly created time log for debugging

@@ -106,8 +106,15 @@
             });
             function calculateTotalHours() {
                 let totalHours = 0;
+
+                // Get the current displayed month and year in YYYY-MM format
+                const currentMonthStart = moment().year(currentYear).month(currentMonth).startOf('month').format('YYYY-MM-DD');
+                const currentMonthEnd = moment().year(currentYear).month(currentMonth).endOf('month').format('YYYY-MM-DD');
+
                 employeesTime.forEach(log => {
-                    if (log.time_in && log.time_out) {
+                    // Only calculate if both time_in and time_out are not null/empty
+                    // AND the log date is within the current displayed month
+                    if (log.time_in && log.time_out && log.date >= currentMonthStart && log.date <= currentMonthEnd) {
                         const timeIn = moment(log.time_in, 'HH:mm:ss');
                         const timeOut = moment(log.time_out, 'HH:mm:ss');
                         totalHours += timeOut.diff(timeIn, 'hours', true); // Calculate difference in hours
@@ -119,7 +126,12 @@
                 const minutes = Math.floor((totalHours - hours) * 60);
                 const seconds = Math.floor(((totalHours - hours) * 60 - minutes) * 60);
 
+                // Update the display to show it's for the current month
+                const monthName = moment().month(currentMonth).format('MMMM');
                 document.getElementById('total-hours-text').innerText = `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                // Optional: Update the label to show which month
+                document.querySelector('#total-hours p strong').innerText = `Total Hours Worked (${monthName} ${currentYear}): `;
             }
 
             function generateCalendar(month, year) {
@@ -129,8 +141,8 @@
                 let firstDayOfMonth = moment().year(year).month(month).startOf('month').day();
 
                 calendarHtml += `<div class="month-container">
-                                    <h3>${monthName} ${year}</h3>
-                                    <div class="month-grid">`;
+                                <h3>${monthName} ${year}</h3>
+                                <div class="month-grid">`;
 
                 const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
                 daysOfWeek.forEach(day => {
@@ -153,26 +165,29 @@
                     if (timeLog) {
                         if (isEditMode) {
                             calendarHtml += `
-                                <p><strong>IN:</strong> <input type="time" value="${timeIn}" data-date="${dayDate}" class="time-in-input"></p>
-                                <p><strong>Out:</strong> <input type="time" value="${timeOut}" data-date="${dayDate}" class="time-out-input"></p>
-                                <input type="hidden" value="${timeLog.id}" class="log-id-input">
-                                <input type="hidden" value="${timeLog.employee_id}" class="employee-id-input">
-                                <button class="save-edit-btn btn btn-sm btn-primary" data-date="${dayDate}">Save</button>
-                            `;
-                            console.log()
+                            <p><strong>IN:</strong> <input type="time" value="${timeIn || ''}" data-date="${dayDate}" class="time-in-input"></p>
+                            <p><strong>Out:</strong> <input type="time" value="${timeOut || ''}" data-date="${dayDate}" class="time-out-input"></p>
+                            <input type="hidden" value="${timeLog.id}" class="log-id-input">
+                            <input type="hidden" value="${timeLog.employee_id}" class="employee-id-input">
+                            <button class="save-edit-btn btn btn-sm btn-primary" data-date="${dayDate}">Save</button>
+                        `;
                         } else {
+                            // Display "Not Set" for null/empty values
+                            let displayTimeIn = timeIn ? timeIn : 'Not Set';
+                            let displayTimeOut = timeOut ? timeOut : 'Not Set';
+
                             calendarHtml += `
-                                <p><strong>IN:</strong> ${timeIn}</p>
-                                <p><strong>Out:</strong> ${timeOut}</p>
-                            `;
+                            <p><strong>IN:</strong> <span class="${!timeIn ? 'not-set' : ''}">${displayTimeIn}</span></p>
+                            <p><strong>Out:</strong> <span class="${!timeOut ? 'not-set' : ''}">${displayTimeOut}</span></p>
+                        `;
                         }
                     } else {
                         if (isCreateMode) {
                             calendarHtml += `
-                                <p><strong>IN:</strong> <input type="time" class="new-time-in"></p>
-                                <p><strong>Out:</strong> <input type="time" class="new-time-out"></p>
-                                <button class="save-create-btn btn btn-sm btn-success" data-date="${dayDate}">Create</button>
-                            `;
+                            <p><strong>IN:</strong> <input type="time" class="new-time-in"></p>
+                            <p><strong>Out:</strong> <input type="time" class="new-time-out"></p>
+                            <button class="save-create-btn btn btn-sm btn-success" data-date="${dayDate}">Create</button>
+                        `;
                         } else {
                             // Don't display "No data" text for print
                             calendarHtml += '';
@@ -185,6 +200,7 @@
                 calendarHtml += `</div></div>`;
                 document.getElementById('calendar').innerHTML = calendarHtml;
                 calculateTotalHours();
+
                 // Attach event listeners for save buttons
                 document.querySelectorAll('.save-edit-btn').forEach(btn => {
                     btn.addEventListener('click', function () {
@@ -196,7 +212,6 @@
                         console.log("Log ID from input field:", logId);
                         updateTimeLog(logId, timeIn, timeOut, employeeId);
                         calculateTotalHours();
-
                     });
                 });
 
@@ -212,18 +227,13 @@
             }
 
             function updateTimeLog(logId, timeIn, timeOut, employeeId) {
-                // Set time_out to 16:00 if empty
-                if (!timeOut) {
-                    timeOut = '16:00';
-                }
+                // Don't force time_out to 16:00 - send as is (can be empty/null)
                 fetch("{{ route('employee.timelogs.update', ['id' => ':id']) }}".replace(':id', logId), {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
                     body: JSON.stringify({
-
                         time_in: timeIn,
-                        time_out: timeOut,
-
+                        time_out: timeOut // Send as is - can be empty string or null
                     })
                 }).then(response => response.json()).then(data => {
                     if (data.message === 'Time Log updated successfully') {
@@ -246,18 +256,14 @@
             }
 
             function createTimeLog(date, timeIn, timeOut) {
-                // Set time_out to 16:00 if empty
-                if (!timeOut) {
-                    timeOut = '16:00';
-                }
-
+                // Don't force time_out to 16:00 - send as is (can be empty/null)
                 fetch("{{ route('employee.timelogs.store', ['id' => $id]) }}", {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
                     body: JSON.stringify({
                         date: date,
                         time_in: timeIn,
-                        time_out: timeOut,
+                        time_out: timeOut, // Send as is - can be empty string or null
                         employee_id: '{{ $employee->id }}'
                     })
                 }).then(response => response.json()).then(data => {
