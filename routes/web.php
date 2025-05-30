@@ -271,6 +271,9 @@ Route::group(["prefix" => 'dashboard'], function () {
                 Route::delete('/{id}', [WarningController::class, 'destroy'])
                     ->middleware('permission:delete warnings')
                     ->name('destroy');
+                Route::get('/employee/{employeeId}', [WarningController::class, 'employeeWarnings'])
+                    ->middleware('permission:view warnings')
+                    ->name('employee');
             });
             /* ================== Vacations ROUTES ================== */
             Route::prefix('vacations')->name('vacations.')->group(function () {
