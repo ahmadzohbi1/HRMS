@@ -12,13 +12,22 @@ use Carbon\Carbon;
 
 class SalaryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $salaries = Salary::with(['employee', 'advances', 'bonuses'])
+        // Get the selected month or default to current month
+        $selectedMonth = $request->get('month', Carbon::now()->format('Y-m'));
+        $currentDate = Carbon::createFromFormat('Y-m', $selectedMonth);
+        
+        // Get ALL salaries (not filtered by month) but with filtered advances/bonuses
+        $salaries = Salary::with(['employee'])
             ->orderBy('created_at', 'desc')
             ->get();
-            
-        return view('admin.salaries.index', compact('salaries'));
+        
+        // Calculate previous and next months for navigation
+        $previousMonth = $currentDate->copy()->subMonth()->format('Y-m');
+        $nextMonth = $currentDate->copy()->addMonth()->format('Y-m');
+        
+        return view('admin.salaries.index', compact('salaries', 'selectedMonth', 'previousMonth', 'nextMonth', 'currentDate'));
     }
 
     public function create()
@@ -53,10 +62,32 @@ class SalaryController extends Controller
             ->with('success', 'Salary created successfully.');
     }
 
-    public function show(Salary $salary)
+    public function show(Salary $salary, Request $request)
     {
-        $salary->load(['employee', 'advances', 'bonuses']);
-        return view('admin.salaries.show', compact('salary'));
+        // Get the selected month or default to current month
+        $selectedMonth = $request->get('month', Carbon::now()->format('Y-m'));
+        $currentDate = Carbon::createFromFormat('Y-m', $selectedMonth);
+        
+        // Load salary with employee and filtered advances/bonuses for the selected month
+        $salary->load([
+            'employee',
+            'advances' => function($query) use ($currentDate) {
+                $query->whereMonth('advance_date', $currentDate->month)
+                      ->whereYear('advance_date', $currentDate->year)
+                      ->orderBy('advance_date', 'desc');
+            },
+            'bonuses' => function($query) use ($currentDate) {
+                $query->whereMonth('bonus_date', $currentDate->month)
+                      ->whereYear('bonus_date', $currentDate->year)
+                      ->orderBy('bonus_date', 'desc');
+            }
+        ]);
+        
+        // Calculate previous and next months for navigation
+        $previousMonth = $currentDate->copy()->subMonth()->format('Y-m');
+        $nextMonth = $currentDate->copy()->addMonth()->format('Y-m');
+        
+        return view('admin.salaries.show', compact('salary', 'selectedMonth', 'previousMonth', 'nextMonth', 'currentDate'));
     }
 
     public function edit(Salary $salary)
@@ -75,18 +106,47 @@ class SalaryController extends Controller
             'notes' => 'nullable|string'
         ]);
 
-        // Deactivate previous salaries for this employee if changing to active
-        if ($request->status === 'active' && $salary->status !== 'active') {
-            Salary::where('employee_id', $request->employee_id)
-                ->where('id', '!=', $salary->id)
-                ->where('status', 'active')
-                ->update(['status' => 'inactive']);
+        $newEffectiveDate = Carbon::parse($request->effective_date);
+        $currentDate = Carbon::now();
+        $originalEffectiveDate = $salary->effective_date;
+
+        // If the new effective date is in the future (after current month)
+        if ($newEffectiveDate->isAfter($currentDate->endOfMonth())) {
+            
+            // Create new salary version for future dates
+            $newSalary = Salary::createNewVersion($request->employee_id, [
+                'fixed_salary' => $request->fixed_salary,
+                'effective_date' => $request->effective_date,
+                'status' => $request->status,
+                'notes' => $request->notes,
+                'created_by' => auth()->id() // Optional: track who made the change
+            ]);
+
+            return redirect()->route('salaries.index')
+                ->with('success', 'New salary version created effective ' . $newEffectiveDate->format('F Y') . '. Previous salary history preserved.');
+        } 
+        // If the effective date is moving forward (but not necessarily future)
+        elseif ($newEffectiveDate->isAfter($originalEffectiveDate)) {
+            
+            // Create new salary version
+            $newSalary = Salary::createNewVersion($request->employee_id, [
+                'fixed_salary' => $request->fixed_salary,
+                'effective_date' => $request->effective_date,
+                'status' => $request->status,
+                'notes' => $request->notes,
+                'created_by' => auth()->id()
+            ]);
+
+            return redirect()->route('salaries.index')
+                ->with('success', 'New salary version created effective ' . $newEffectiveDate->format('F Y') . '. Historical data preserved.');
         }
+        else {
+            // For same month updates or past month corrections, update the existing record
+            $salary->update($request->all());
 
-        $salary->update($request->all());
-
-        return redirect()->route('salaries.index')
-            ->with('success', 'Salary updated successfully.');
+            return redirect()->route('salaries.index')
+                ->with('success', 'Salary record updated successfully.');
+        }
     }
 
     public function destroy(Salary $salary)
@@ -103,30 +163,31 @@ class SalaryController extends Controller
     }
 
     public function storeAdvance(Request $request, Salary $salary)
-{
-    $request->validate([
-        'amount' => 'required|numeric|min:0',
-        'advance_date' => 'required|date',
-        'reason' => 'nullable|string',
-        'status' => 'required|in:pending,approved,rejected,paid,completed',
-        'deduction_start_date' => 'nullable|date',
-        'installments' => 'required|integer|min:1'
-    ]);
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:0',
+            'advance_date' => 'required|date',
+            'reason' => 'nullable|string',
+            'status' => 'required|in:pending,approved,rejected,paid,completed',
+            'deduction_start_date' => 'nullable|date',
+            'installments' => 'required|integer|min:1'
+        ]);
 
-    $advance = new Advance($request->all());
-    $advance->salary_id = $salary->id;
-    $advance->remaining_amount = $request->amount;
-    
-    // Set default status to 'approved' if not specified
-    if (!$request->status) {
-        $advance->status = 'approved';
+        $advance = new Advance($request->all());
+        $advance->salary_id = $salary->id;
+        $advance->remaining_amount = $request->amount;
+        
+        if (!$request->status) {
+            $advance->status = 'approved';
+        }
+        
+        $advance->save();
+
+        $currentMonth = Carbon::parse($request->advance_date)->format('Y-m');
+        
+        return redirect()->route('salaries.show', ['salary' => $salary, 'month' => $currentMonth])
+            ->with('success', 'Advance created successfully.');
     }
-    
-    $advance->save();
-
-    return redirect()->route('salaries.show', $salary)
-        ->with('success', 'Advance created successfully.');
-}
 
     public function editAdvance(Salary $salary, Advance $advance)
     {
@@ -147,14 +208,18 @@ class SalaryController extends Controller
 
         $advance->update($request->all());
 
-        return redirect()->route('salaries.show', $salary)
+        $currentMonth = Carbon::parse($request->advance_date)->format('Y-m');
+
+        return redirect()->route('salaries.show', ['salary' => $salary, 'month' => $currentMonth])
             ->with('success', 'Advance updated successfully.');
     }
 
     public function destroyAdvance(Salary $salary, Advance $advance)
     {
+        $currentMonth = $advance->advance_date->format('Y-m');
         $advance->delete();
-        return redirect()->route('salaries.show', $salary)
+        
+        return redirect()->route('salaries.show', ['salary' => $salary, 'month' => $currentMonth])
             ->with('success', 'Advance deleted successfully.');
     }
 
@@ -165,28 +230,29 @@ class SalaryController extends Controller
     }
 
     public function storeBonus(Request $request, Salary $salary)
-{
-    $request->validate([
-        'amount' => 'required|numeric|min:0',
-        'bonus_date' => 'required|date',
-        'type' => 'required|in:performance,annual,project,attendance,special,other',
-        'reason' => 'nullable|string',
-        'status' => 'required|in:pending,approved,rejected,paid'
-    ]);
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:0',
+            'bonus_date' => 'required|date',
+            'type' => 'required|in:performance,annual,project,attendance,special,other',
+            'reason' => 'nullable|string',
+            'status' => 'required|in:pending,approved,rejected,paid'
+        ]);
 
-    $bonus = new Bonus($request->all());
-    $bonus->salary_id = $salary->id;
-    
-    // Set default status to 'approved' if not specified
-    if (!$request->status) {
-        $bonus->status = 'approved';
+        $bonus = new Bonus($request->all());
+        $bonus->salary_id = $salary->id;
+        
+        if (!$request->status) {
+            $bonus->status = 'approved';
+        }
+        
+        $bonus->save();
+
+        $currentMonth = Carbon::parse($request->bonus_date)->format('Y-m');
+
+        return redirect()->route('salaries.show', ['salary' => $salary, 'month' => $currentMonth])
+            ->with('success', 'Bonus created successfully.');
     }
-    
-    $bonus->save();
-
-    return redirect()->route('salaries.show', $salary)
-        ->with('success', 'Bonus created successfully.');
-}
 
     public function editBonus(Salary $salary, Bonus $bonus)
     {
@@ -205,14 +271,18 @@ class SalaryController extends Controller
 
         $bonus->update($request->all());
 
-        return redirect()->route('salaries.show', $salary)
+        $currentMonth = Carbon::parse($request->bonus_date)->format('Y-m');
+
+        return redirect()->route('salaries.show', ['salary' => $salary, 'month' => $currentMonth])
             ->with('success', 'Bonus updated successfully.');
     }
 
     public function destroyBonus(Salary $salary, Bonus $bonus)
     {
+        $currentMonth = $bonus->bonus_date->format('Y-m');
         $bonus->delete();
-        return redirect()->route('salaries.show', $salary)
+        
+        return redirect()->route('salaries.show', ['salary' => $salary, 'month' => $currentMonth])
             ->with('success', 'Bonus deleted successfully.');
     }
 }
