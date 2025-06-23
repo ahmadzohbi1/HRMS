@@ -17,7 +17,6 @@ use App\Http\Controllers\Admin\{
     VacationController
 };
 use App\Http\Controllers\Admin\Employees\{
-    HourRateController,
     SalaryController,
     WarningController,
     ShiftController,
@@ -174,35 +173,71 @@ Route::group(["prefix" => 'dashboard'], function () {
                     ->name('delete');
             });
             /* ================== Hour_Rate ROUTES ================== */
-            Route::prefix('hour_rate')->name('hour_rate.')->group(function () {
-                Route::get('/', [HourRateController::class, 'index'])
-                    ->middleware('permission:view hour_rate')
-                    ->name('index');
-                Route::get('/create', [HourRateController::class, 'create'])
-                    ->middleware('permission:create hour_rate')
-                    ->name('create');
-                Route::post('/', [HourRateController::class, 'store'])
-                    ->middleware('permission:create hour_rate')
-                    ->name('store');
-                Route::get('/{id}/edit', [HourRateController::class, 'edit'])
-                    ->middleware('permission:edit hour_rate')
-                    ->name('edit');
-                Route::put('/{id}', [HourRateController::class, 'update'])
-                    ->middleware('permission:edit hour_rate')
-                    ->name('update');
-                Route::delete('/{id}/delete', [HourRateController::class, 'destroy'])
-                    ->middleware('permission:delete hour_rate')
-                    ->name('destroy');
-            });
+            
             /* ================== Salaries ROUTES ================== */
-            Route::prefix('salaries')->name('salary.')->group(function () {
+            Route::prefix('salaries')->name('salaries.')->group(function () {
+                // Main Salary Routes
                 Route::get('/', [SalaryController::class, 'index'])
                     ->middleware('permission:view salaries')
                     ->name('index');
-                Route::post('/update-all', [SalaryController::class, 'updateAllSalaries'])
+                Route::get('/create', [SalaryController::class, 'create'])
+                    ->middleware('permission:create salaries')
+                    ->name('create');
+                Route::post('/', [SalaryController::class, 'store'])
+                    ->middleware('permission:create salaries')
+                    ->name('store');
+                Route::get('/{salary}', [SalaryController::class, 'show'])
+                    ->middleware('permission:view salaries')
+                    ->name('show');
+                Route::get('/{salary}/edit', [SalaryController::class, 'edit'])
                     ->middleware('permission:edit salaries')
-                    ->name('supdateAll');
+                    ->name('edit');
+                Route::put('/{salary}', [SalaryController::class, 'update'])
+                    ->middleware('permission:edit salaries')
+                    ->name('update');
+                Route::delete('/{salary}', [SalaryController::class, 'destroy'])
+                    ->middleware('permission:delete salaries')
+                    ->name('destroy');
+                
+                // Advance Routes (nested under salaries)
+                Route::prefix('{salary}/advances')->name('advances.')->group(function () {
+                    Route::get('/create', [SalaryController::class, 'createAdvance'])
+                        ->middleware('permission:create salaries')
+                        ->name('create');
+                    Route::post('/', [SalaryController::class, 'storeAdvance'])
+                        ->middleware('permission:create salaries')
+                        ->name('store');
+                    Route::get('/{advance}/edit', [SalaryController::class, 'editAdvance'])
+                        ->middleware('permission:edit salaries')
+                        ->name('edit');
+                    Route::put('/{advance}', [SalaryController::class, 'updateAdvance'])
+                        ->middleware('permission:edit salaries')
+                        ->name('update');
+                    Route::delete('/{advance}', [SalaryController::class, 'destroyAdvance'])
+                        ->middleware('permission:delete salaries')
+                        ->name('destroy');
+                });
+                
+                // Bonus Routes (nested under salaries)
+                Route::prefix('{salary}/bonuses')->name('bonuses.')->group(function () {
+                    Route::get('/create', [SalaryController::class, 'createBonus'])
+                        ->middleware('permission:create salaries')
+                        ->name('create');
+                    Route::post('/', [SalaryController::class, 'storeBonus'])
+                        ->middleware('permission:create salaries')
+                        ->name('store');
+                    Route::get('/{bonus}/edit', [SalaryController::class, 'editBonus'])
+                        ->middleware('permission:edit salaries')
+                        ->name('edit');
+                    Route::put('/{bonus}', [SalaryController::class, 'updateBonus'])
+                        ->middleware('permission:edit salaries')
+                        ->name('update');
+                    Route::delete('/{bonus}', [SalaryController::class, 'destroyBonus'])
+                        ->middleware('permission:delete salaries')
+                        ->name('destroy');
+                });
             });
+            
             /* ================== Shifts ROUTES ================== */
             Route::prefix('shifts')->name('shifts.')->group(function () {
                 Route::get('/', [ShiftController::class, 'index'])

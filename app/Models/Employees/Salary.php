@@ -7,15 +7,35 @@ use App\Models\Employee;
 class Salary extends Model
 {
     protected $table = 'salaries';
+    
     protected $fillable = [
         'employee_id',
-        'salary',
-        'month',
-        'created_at',
-        'updated_at'
-
+        'fixed_salary',
+        'effective_date',
+        'status',
+        'notes'
     ];
-    public function employee(){
-        return $this->belongsTo(Employee::class);
+
+    protected $casts = [
+        'fixed_salary' => 'decimal:2',
+        'effective_date' => 'date'
+    ];
+
+    // Relationship with Employee
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'employee_id');
+    }
+
+    // Relationship with Advances
+    public function advances()
+    {
+        return $this->hasMany(Advance::class, 'salary_id');
+    }
+
+    // Relationship with Bonuses
+    public function bonuses()
+    {
+        return $this->hasMany(Bonus::class, 'salary_id');
     }
 }

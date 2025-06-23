@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use App\Models\Employees\HourRate;
-use App\Models\Employees\Shift;
-use App\Models\Employees\EmployeeHasShifts;
+use App\Models\Employees\Salary;
+use App\Models\Employees\Bonus;
+use App\Models\Employees\Advance;
 use Illuminate\Database\Eloquent\Model;
 
 class Employee extends Model
@@ -26,13 +26,13 @@ class Employee extends Model
         'created_at',
         'updated_at',
         'position_id'
-
     ];
 
     public function timeLog()
     {
         return $this->hasMany(TimeLog::class, 'employee_id');
     }
+    
     public function position()
     {
         return $this->belongsTo(Position::class, 'position_id');
@@ -42,14 +42,36 @@ class Employee extends Model
     {
         return $this->belongsToMany(Department::class, 'employee_departments', 'employee_id', 'department_id');
     }
-    public function hourRate()
-    {
-        return $this->hasOne(HourRate::class);
-    }
+    
+
     public function warnings()
     {
         return $this->hasMany(Warning::class);
     }
-    
 
+    // New Salary Relationship
+    public function salaries()
+    {
+        return $this->hasMany(Salary::class, 'employee_id');
+    }
+
+    // Get current active salary
+    public function currentSalary()
+    {
+        return $this->hasOne(Salary::class, 'employee_id')
+                    ->where('status', 'active')
+                    ->orderBy('effective_date', 'desc');
+    }
+
+    // Get advances through salaries
+    public function advances()
+    {
+        return $this->hasManyThrough(Advance::class, Salary::class, 'employee_id', 'salary_id');
+    }
+
+    // Get bonuses through salaries
+    public function bonuses()
+    {
+        return $this->hasManyThrough(Bonus::class, Salary::class, 'employee_id', 'salary_id');
+    }
 }

@@ -60,17 +60,10 @@
                         </a>
                     </li>
                 @endcan
-                @can('view hour_rate')
-                    <li>
-                        <a href="{{ route('hour_rate.index') }}" class="waves-effect">
-                            <i class="bx bx-dollar-circle"></i>
-                            <span key="t-contact">Employees Hour Rate</span>
-                        </a>
-                    </li>
-                @endcan
+                
                 @can('view salaries')
                     <li>
-                        <a href="{{ route('salary.index') }}" class="waves-effect">
+                        <a href="{{ route('salaries.index') }}" class="waves-effect">
                             <i class="bx bx-money"></i>
                             <span key="t-contact">Salaries</span>
                         </a>

@@ -4,122 +4,215 @@ namespace App\Http\Controllers\Admin\Employees;
 
 use App\Http\Controllers\Controller;
 use App\Models\Employees\Salary;
+use App\Models\Employees\Advance;
+use App\Models\Employees\Bonus;
 use Illuminate\Http\Request;
 use App\Models\Employee;
-use App\Models\Employees\TimesheetEmployee;
-use App\Models\Employees\HourRate;
-use App\Models\Warning; // Make sure this model is imported
 use Carbon\Carbon;
 
 class SalaryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Request $request)
+    public function index()
     {
-        // Get current month and year if not provided in the request
-        $month = $request->input('month', date('m'));  // Default to current month
-        $year = $request->input('year', date('Y'));  // Default to current year
-
-        // Ensure the month is two digits (01, 02, ..., 12)
-        $month = str_pad($month, 2, '0', STR_PAD_LEFT);
-
-        // Build the query to filter by month and year
-        $query = Salary::with('employee');
-
-        // Apply the filter if month and year are provided
-        if ($month && $year) {
-            $query->where('month', "{$year}-{$month}");
-        }
-
-        // Paginate the results (10 per page)
-        $salaries = $query->paginate(15);
-
-        return view('admin.salaries.index', compact('salaries', 'month', 'year'));
+        $salaries = Salary::with(['employee', 'advances', 'bonuses'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+            
+        return view('admin.salaries.index', compact('salaries'));
     }
 
-    public function updateAllSalaries()
+    public function create()
+    {
+        $employees = Employee::whereDoesntHave('salaries', function($query) {
+            $query->where('status', 'active');
+        })->get();
+        
+        return view('admin.salaries.create', compact('employees'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'employee_id' => 'required|exists:employees,id',
+            'fixed_salary' => 'required|numeric|min:0',
+            'effective_date' => 'required|date',
+            'status' => 'required|in:active,inactive,pending',
+            'notes' => 'nullable|string'
+        ]);
+
+        // Deactivate previous salaries for this employee
+        if ($request->status === 'active') {
+            Salary::where('employee_id', $request->employee_id)
+                ->where('status', 'active')
+                ->update(['status' => 'inactive']);
+        }
+
+        Salary::create($request->all());
+
+        return redirect()->route('salaries.index')
+            ->with('success', 'Salary created successfully.');
+    }
+
+    public function show(Salary $salary)
+    {
+        $salary->load(['employee', 'advances', 'bonuses']);
+        return view('admin.salaries.show', compact('salary'));
+    }
+
+    public function edit(Salary $salary)
     {
         $employees = Employee::all();
-        $updatedCount = 0;
-
-        foreach ($employees as $employee) {
-            // Check if there's a deduction warning before updating salary
-            $updated = $this->updateEmployeeSalary($employee->id);
-            if ($updated) {
-                $updatedCount++;
-            }
-        }
-
-        return redirect()->route('salary.index')->with('success', "{$updatedCount} employee salaries have been updated.");
+        return view('admin.salaries.edit', compact('salary', 'employees'));
     }
 
-    private function updateEmployeeSalary($employeeId)
+    public function update(Request $request, Salary $salary)
     {
-        // Fetch the employee's total hours for the current month
-        $totalHours = TimesheetEmployee::where('employee_id', $employeeId)
-            ->where('month', Carbon::now()->format('Y-m'))
-            ->value('total_hours_month');
-        
-        // Fetch the employee's hour rate
-        $hourRate = HourRate::where('employee_id', $employeeId)
-            ->value('hour_rate');
-        
-        // Check if total hours and hourly rate exist
-        if (!$totalHours || !$hourRate) {
-            return false;
+        $request->validate([
+            'employee_id' => 'required|exists:employees,id',
+            'fixed_salary' => 'required|numeric|min:0',
+            'effective_date' => 'required|date',
+            'status' => 'required|in:active,inactive,pending',
+            'notes' => 'nullable|string'
+        ]);
+
+        // Deactivate previous salaries for this employee if changing to active
+        if ($request->status === 'active' && $salary->status !== 'active') {
+            Salary::where('employee_id', $request->employee_id)
+                ->where('id', '!=', $salary->id)
+                ->where('status', 'active')
+                ->update(['status' => 'inactive']);
         }
 
-        // Get any warnings that may have a salary deduction impact
-        $warnings = Warning::where('employee_id', $employeeId)
-            ->whereMonth('created_at', Carbon::now()->month)
-            ->get();
+        $salary->update($request->all());
 
-        // Initialize total deduction hours
-        $totalDeductionHours = 0;
-
-        // Calculate deduction hours based on warnings
-        foreach ($warnings as $warning) {
-            // Assuming the warning is related to a deduction (you can add more logic to handle different warning types)
-            $totalDeductionHours += $warning->deduct_hours;  // This assumes you have a 'deduct_hours' column in the Warning model
-        }
-
-        // If there are deduction hours, subtract them from total hours worked
-        if ($totalDeductionHours > 0) {
-            list($hours, $minutes, $seconds) = explode(":", $totalHours);
-            $totalHoursNumeric = $hours + ($minutes / 60) + ($seconds / 3600);
-
-            // Deduct the total deduction hours from the total hours worked
-            $totalHoursNumeric -= $totalDeductionHours;
-
-            // Ensure total hours doesn't go negative
-            $totalHoursNumeric = max(0, $totalHoursNumeric);
-
-            // Recalculate the salary based on the new total hours
-            $salary = $totalHoursNumeric * $hourRate;
-        } else {
-            // If no deduction, simply calculate the salary based on the total hours
-            list($hours, $minutes, $seconds) = explode(":", $totalHours);
-            $totalHoursNumeric = $hours + ($minutes / 60) + ($seconds / 3600);
-            $salary = $totalHoursNumeric * $hourRate;
-        }
-
-        // Update or create the salary record for this employee
-        Salary::updateOrCreate(
-            [
-                'employee_id' => $employeeId,
-                'month' => Carbon::now()->format('Y-m'),
-            ],
-            [
-                'salary' => $salary,
-            ]
-        );
-
-        return true;
+        return redirect()->route('salaries.index')
+            ->with('success', 'Salary updated successfully.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    public function destroy(Salary $salary)
+    {
+        $salary->delete();
+        return redirect()->route('salaries.index')
+            ->with('success', 'Salary deleted successfully.');
     }
+
+    // Advance Methods
+    public function createAdvance(Salary $salary)
+    {
+        return view('admin.salaries.advances.create', compact('salary'));
+    }
+
+    public function storeAdvance(Request $request, Salary $salary)
+{
+    $request->validate([
+        'amount' => 'required|numeric|min:0',
+        'advance_date' => 'required|date',
+        'reason' => 'nullable|string',
+        'status' => 'required|in:pending,approved,rejected,paid,completed',
+        'deduction_start_date' => 'nullable|date',
+        'installments' => 'required|integer|min:1'
+    ]);
+
+    $advance = new Advance($request->all());
+    $advance->salary_id = $salary->id;
+    $advance->remaining_amount = $request->amount;
+    
+    // Set default status to 'approved' if not specified
+    if (!$request->status) {
+        $advance->status = 'approved';
+    }
+    
+    $advance->save();
+
+    return redirect()->route('salaries.show', $salary)
+        ->with('success', 'Advance created successfully.');
+}
+
+    public function editAdvance(Salary $salary, Advance $advance)
+    {
+        return view('admin.salaries.advances.edit', compact('salary', 'advance'));
+    }
+
+    public function updateAdvance(Request $request, Salary $salary, Advance $advance)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:0',
+            'advance_date' => 'required|date',
+            'reason' => 'nullable|string',
+            'status' => 'required|in:pending,approved,rejected,paid,completed',
+            'deduction_start_date' => 'nullable|date',
+            'installments' => 'required|integer|min:1',
+            'remaining_amount' => 'nullable|numeric|min:0'
+        ]);
+
+        $advance->update($request->all());
+
+        return redirect()->route('salaries.show', $salary)
+            ->with('success', 'Advance updated successfully.');
+    }
+
+    public function destroyAdvance(Salary $salary, Advance $advance)
+    {
+        $advance->delete();
+        return redirect()->route('salaries.show', $salary)
+            ->with('success', 'Advance deleted successfully.');
+    }
+
+    // Bonus Methods
+    public function createBonus(Salary $salary)
+    {
+        return view('admin.salaries.bonuses.create', compact('salary'));
+    }
+
+    public function storeBonus(Request $request, Salary $salary)
+{
+    $request->validate([
+        'amount' => 'required|numeric|min:0',
+        'bonus_date' => 'required|date',
+        'type' => 'required|in:performance,annual,project,attendance,special,other',
+        'reason' => 'nullable|string',
+        'status' => 'required|in:pending,approved,rejected,paid'
+    ]);
+
+    $bonus = new Bonus($request->all());
+    $bonus->salary_id = $salary->id;
+    
+    // Set default status to 'approved' if not specified
+    if (!$request->status) {
+        $bonus->status = 'approved';
+    }
+    
+    $bonus->save();
+
+    return redirect()->route('salaries.show', $salary)
+        ->with('success', 'Bonus created successfully.');
+}
+
+    public function editBonus(Salary $salary, Bonus $bonus)
+    {
+        return view('admin.salaries.bonuses.edit', compact('salary', 'bonus'));
+    }
+
+    public function updateBonus(Request $request, Salary $salary, Bonus $bonus)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:0',
+            'bonus_date' => 'required|date',
+            'type' => 'required|in:performance,annual,project,attendance,special,other',
+            'reason' => 'nullable|string',
+            'status' => 'required|in:pending,approved,rejected,paid'
+        ]);
+
+        $bonus->update($request->all());
+
+        return redirect()->route('salaries.show', $salary)
+            ->with('success', 'Bonus updated successfully.');
+    }
+
+    public function destroyBonus(Salary $salary, Bonus $bonus)
+    {
+        $bonus->delete();
+        return redirect()->route('salaries.show', $salary)
+            ->with('success', 'Bonus deleted successfully.');
+    }
+}
