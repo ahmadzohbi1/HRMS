@@ -18,22 +18,6 @@ return new class extends Migration
             $table->string('month');
             $table->timestamps();
         });
-        Schema::create('hour_rates', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
-            $table->unique('employee_id');
-            $table->double('hour_rate');
-            $table->string('currency');
-            $table->timestamps();
-        }); 
-        Schema::create('salaries', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
-            $table->string('currency', 10); 
-            $table->double('salary');
-            $table->string('month');
-            $table->timestamps();
-        });
         Schema::create('warnings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
