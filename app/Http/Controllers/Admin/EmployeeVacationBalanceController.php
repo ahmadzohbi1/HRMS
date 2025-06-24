@@ -46,7 +46,19 @@ class EmployeeVacationBalanceController extends Controller
         $vacationTypes = VacationType::all();
         $years = range(now()->year, now()->year + 1);
         
-        return view('admin.vacation-balances.create', compact('employees', 'vacationTypes', 'years'));
+        // Create empty balance object for the form
+        $balance = (object) [
+            'id' => null,
+            'employee_id' => old('employee_id'),
+            'vacation_type_id' => old('vacation_type_id'),
+            'balance' => old('balance', 0),
+            'total_days' => old('total_days', 0),
+            'used_days' => old('used_days', 0),
+            'remaining_days' => old('remaining_days', 0),
+            'year' => old('year', now()->year),
+        ];
+        
+        return view('admin.vacation-balances.create', compact('employees', 'vacationTypes', 'years', 'balance'));
     }
 
     public function store(Request $request)
@@ -55,6 +67,8 @@ class EmployeeVacationBalanceController extends Controller
             'employee_id' => 'required|exists:employees,id',
             'vacation_type_id' => 'required|exists:vacation_types,id',
             'balance' => 'required|integer|min:0',
+            'total_days' => 'nullable|integer|min:0',
+            'used_days' => 'nullable|integer|min:0',
             'year' => 'required|integer|min:' . (now()->year - 5) . '|max:' . (now()->year + 5),
         ]);
 
@@ -69,7 +83,19 @@ class EmployeeVacationBalanceController extends Controller
             return back()->withErrors(['error' => 'Balance already exists for this employee, vacation type, and year combination.']);
         }
 
-        EmployeeVacationBalance::create($request->all());
+        // Calculate remaining days
+        $usedDays = $request->used_days ?? 0;
+        $totalDays = $request->total_days ?? $request->balance;
+        $remainingDays = $totalDays - $usedDays;
+
+        EmployeeVacationBalance::create([
+            'employee_id' => $request->employee_id,
+            'vacation_type_id' => $request->vacation_type_id,
+            'total_days' => $totalDays,
+            'used_days' => $usedDays,
+            'remaining_days' => $remainingDays,
+            'year' => $request->year,
+        ]);
 
         return redirect()->route('vacation-balances.index')
             ->with('success', 'Vacation balance created successfully.');
@@ -83,7 +109,7 @@ class EmployeeVacationBalanceController extends Controller
 
     public function edit($id)
     {
-        $balance = EmployeeVacationBalance::findOrFail($id);
+        $balance = EmployeeVacationBalance::with(['employee', 'vacationType'])->findOrFail($id);
         $employees = Employee::all();
         $vacationTypes = VacationType::all();
         $years = range(now()->year - 2, now()->year + 1);
@@ -99,6 +125,8 @@ class EmployeeVacationBalanceController extends Controller
             'employee_id' => 'required|exists:employees,id',
             'vacation_type_id' => 'required|exists:vacation_types,id',
             'balance' => 'required|integer|min:0',
+            'total_days' => 'nullable|integer|min:0',
+            'used_days' => 'nullable|integer|min:0',
             'year' => 'required|integer|min:' . (now()->year - 5) . '|max:' . (now()->year + 5),
         ]);
 
@@ -113,7 +141,19 @@ class EmployeeVacationBalanceController extends Controller
             return back()->withErrors(['error' => 'Balance already exists for this employee, vacation type, and year combination.']);
         }
 
-        $balance->update($request->all());
+        // Calculate remaining days
+        $usedDays = $request->used_days ?? 0;
+        $totalDays = $request->total_days ?? $request->balance;
+        $remainingDays = $totalDays - $usedDays;
+
+        $balance->update([
+            'employee_id' => $request->employee_id,
+            'vacation_type_id' => $request->vacation_type_id,
+            'total_days' => $totalDays,
+            'used_days' => $usedDays,
+            'remaining_days' => $remainingDays,
+            'year' => $request->year,
+        ]);
 
         return redirect()->route('vacation-balances.index')
             ->with('success', 'Vacation balance updated successfully.');
@@ -134,7 +174,19 @@ class EmployeeVacationBalanceController extends Controller
         $vacationTypes = VacationType::all();
         $years = range(now()->year, now()->year + 1);
         
-        return view('admin.vacation-balances.bulk-create', compact('employees', 'vacationTypes', 'years'));
+        // Create empty balance object for bulk creation
+        $balance = (object) [
+            'id' => null,
+            'employee_id' => null,
+            'vacation_type_id' => old('vacation_type_id'),
+            'balance' => old('balance', 0),
+            'total_days' => old('total_days', 0),
+            'used_days' => old('used_days', 0),
+            'remaining_days' => old('remaining_days', 0),
+            'year' => old('year', now()->year),
+        ];
+        
+        return view('admin.vacation-balances.bulk-create', compact('employees', 'vacationTypes', 'years', 'balance'));
     }
 
     public function bulkStore(Request $request)
@@ -144,11 +196,16 @@ class EmployeeVacationBalanceController extends Controller
             'employee_ids.*' => 'exists:employees,id',
             'vacation_type_id' => 'required|exists:vacation_types,id',
             'balance' => 'required|integer|min:0',
+            'total_days' => 'nullable|integer|min:0',
+            'used_days' => 'nullable|integer|min:0',
             'year' => 'required|integer|min:' . (now()->year - 5) . '|max:' . (now()->year + 5),
         ]);
 
         $created = 0;
         $skipped = 0;
+        $usedDays = $request->used_days ?? 0;
+        $totalDays = $request->total_days ?? $request->balance;
+        $remainingDays = $totalDays - $usedDays;
 
         foreach ($request->employee_ids as $employeeId) {
             $existingBalance = EmployeeVacationBalance::where([
@@ -161,7 +218,9 @@ class EmployeeVacationBalanceController extends Controller
                 EmployeeVacationBalance::create([
                     'employee_id' => $employeeId,
                     'vacation_type_id' => $request->vacation_type_id,
-                    'balance' => $request->balance,
+                    'total_days' => $totalDays,
+                    'used_days' => $usedDays,
+                    'remaining_days' => $remainingDays,
                     'year' => $request->year,
                 ]);
                 $created++;

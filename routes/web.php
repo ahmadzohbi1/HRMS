@@ -402,3 +402,17 @@ Route::post('/verify-pin', [TimeSheetController::class, 'verifyPin'])->name('ver
 Route::post('/store-temp-file', [HomeController::class, 'storeTempFile'])->name('storeTempFile');
 Route::post('/delete-temp-file', [HomeController::class, 'deleteTempFile'])->name('deleteTempFile');
 Route::get('{any}', [HomeController::class, 'index'])->name('index');
+
+Route::get('/vacation-request/index', [VacationRequestController::class, 'index'])->name('vacation-request.index');
+
+// New routes for form submission and API
+Route::post('/vacation-request/store', [VacationRequestController::class, 'store'])->name('vacation-request.store');
+Route::get('/api/vacation-balance/{employeeId}/{vacationTypeId}', [VacationRequestController::class, 'getVacationBalance']);
+
+// Optional: Admin routes for managing vacation requests
+// Route::prefix('admin')->name('admin.')->group(function () {
+//     Route::get('/vacations', [AdminVacationController::class, 'index'])->name('vacations.index');
+//     Route::get('/vacations/{vacation}', [AdminVacationController::class, 'show'])->name('vacations.show');
+//     Route::patch('/vacations/{vacation}/approve', [AdminVacationController::class, 'approve'])->name('vacations.approve');
+//     Route::patch('/vacations/{vacation}/reject', [AdminVacationController::class, 'reject'])->name('vacations.reject');
+// });

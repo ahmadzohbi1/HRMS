@@ -92,8 +92,37 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        'address' => env('MAIL_FROM_ADDRESS', 'noreply@alzohbi.com'),
+        'name' => env('MAIL_FROM_NAME', 'Alzohbi HR System'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Email Configuration
+    |--------------------------------------------------------------------------
+    |
+    | This is the email address where admin notifications will be sent,
+    | such as new vacation requests, system alerts, and other administrative
+    | notifications that require management attention.
+    |
+    */
+
+    'admin_email' => env('MAIL_ADMIN_EMAIL', 'admin@alzohbi.com'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | HR Department Email Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Email addresses for different HR functions. You can expand this
+    | section to include multiple HR email addresses for different purposes.
+    |
+    */
+
+    'hr_emails' => [
+        'general' => env('MAIL_HR_GENERAL', 'hr@alzohbi.com'),
+        'vacation' => env('MAIL_HR_VACATION', 'hr-vacation@alzohbi.com'),
+        'payroll' => env('MAIL_HR_PAYROLL', 'payroll@alzohbi.com'),
     ],
 
     /*
@@ -114,4 +143,5 @@ return [
             resource_path('views/vendor/mail'),
         ],
     ],
+
 ];

@@ -207,9 +207,12 @@
                                         <td>
                                             <div class="d-flex align-items-center">
                                                 <div class="avatar-xs me-3">
-                                                    <span class="avatar-title rounded-circle bg-soft-primary text-primary">
-                                                        {{ substr($balance->employee->name, 0, 1) }}
-                                                    </span>
+                                                    
+                                                        
+                                                    <img src="{{ asset('uploads/' . $balance->employee->image_url) }}"
+                                                         class="rounded-circle me-2" 
+                                                         width="32" height="32" alt="Avatar">
+                                                    
                                                 </div>
                                                 <div>
                                                     <h5 class="font-size-14 mb-1">{{ $balance->employee->name }}</h5>

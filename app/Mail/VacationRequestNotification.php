@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class VacationRequestSubmitted extends Mailable
+class VacationRequestNotification extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -24,14 +24,14 @@ class VacationRequestSubmitted extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Vacation Request Submitted Successfully',
+            subject: 'New Vacation Request - ' . $this->vacation->applicant_name,
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'emails.vacation-request-submitted',
+            view: 'emails.vacation-request-notification',
         );
     }
 
