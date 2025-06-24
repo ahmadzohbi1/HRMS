@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\VacationRequestController;
 use App\Http\Controllers\Admin\{
     SuperAdminController,
     ProfileController,
@@ -14,7 +15,9 @@ use App\Http\Controllers\Admin\{
     EmployeeController,
     PositionsController,
     TimeSheetController,
-    VacationController
+    VacationController,
+    VacationTypeController,
+    EmployeeVacationBalanceController
 };
 use App\Http\Controllers\Admin\Employees\{
     SalaryController,
@@ -334,7 +337,59 @@ Route::group(["prefix" => 'dashboard'], function () {
                     ->middleware('permission:delete vacations')
                     ->name('destroy');
             });
-
+            Route::prefix('vacation-types')->name('vacation-types.')->group(function () {
+                Route::get('/', [VacationTypeController::class, 'index'])
+                    ->middleware('permission:view vacations')
+                    ->name('index');
+                Route::get('/create', [VacationTypeController::class, 'create'])
+                    ->middleware('permission:create vacations')
+                    ->name('create');
+                Route::post('/', [VacationTypeController::class, 'store'])
+                    ->middleware('permission:create vacations')
+                    ->name('store');
+                Route::get('/{id}', [VacationTypeController::class, 'show'])
+                    ->middleware('permission:view vacations')
+                    ->name('show');
+                Route::get('/{id}/edit', [VacationTypeController::class, 'edit'])
+                    ->middleware('permission:edit vacations')
+                    ->name('edit');
+                Route::put('/{id}', [VacationTypeController::class, 'update'])
+                    ->middleware('permission:edit vacations')
+                    ->name('update');
+                Route::delete('/{id}', [VacationTypeController::class, 'destroy'])
+                    ->middleware('permission:delete vacations')
+                    ->name('destroy');
+            });
+            Route::prefix('vacation-balances')->name('vacation-balances.')->group(function () {
+                Route::get('/', [EmployeeVacationBalanceController::class, 'index'])
+                    ->middleware('permission:view vacations')
+                    ->name('index');
+                Route::get('/create', [EmployeeVacationBalanceController::class, 'create'])
+                    ->middleware('permission:create vacations')
+                    ->name('create');
+                Route::post('/', [EmployeeVacationBalanceController::class, 'store'])
+                    ->middleware('permission:create vacations')
+                    ->name('store');
+                Route::get('/{id}', [EmployeeVacationBalanceController::class, 'show'])
+                    ->middleware('permission:view vacations')
+                    ->name('show');
+                Route::get('/{id}/edit', [EmployeeVacationBalanceController::class, 'edit'])
+                    ->middleware('permission:edit vacations')
+                    ->name('edit');
+                Route::put('/{id}', [EmployeeVacationBalanceController::class, 'update'])
+                    ->middleware('permission:edit vacations')
+                    ->name('update');
+                Route::delete('/{id}', [EmployeeVacationBalanceController::class, 'destroy'])
+                    ->middleware('permission:delete vacations')
+                    ->name('destroy');
+                // Bulk operations
+                Route::get('/bulk/create', [EmployeeVacationBalanceController::class, 'bulkCreate'])
+                    ->middleware('permission:create vacations')
+                    ->name('bulk.create');
+                Route::post('/bulk/store', [EmployeeVacationBalanceController::class, 'bulkStore'])
+                    ->middleware('permission:create vacations')
+                    ->name('bulk.store');
+            });
         });
     });
 });
