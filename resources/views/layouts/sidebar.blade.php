@@ -101,22 +101,7 @@
                         </a>
                     </li>
                 @endcan
-                @can('view vacations')
-                    <li>
-                        <a href="{{ route('vacation-types.index') }}" class="waves-effect">
-                            <i class="bx bx-sun"></i>
-                            <span key="t-contact">Vacation Types</span>
-                        </a>
-                    </li>
-                @endcan
-                @can('view vacations')
-                    <li>
-                        <a href="{{ route('vacation-balances.index') }}" class="waves-effect">
-                            <i class="bx bx-sun"></i>
-                            <span key="t-contact">Vacation Balances</span>
-                        </a>
-                    </li>
-                @endcan
+                
                 @can('view holidays')
                     <li>
                         <a href="{{ route('warnings.index') }}" class="waves-effect">
