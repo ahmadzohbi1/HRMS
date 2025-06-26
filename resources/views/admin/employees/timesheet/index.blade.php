@@ -41,16 +41,6 @@
                 border-radius: 50%;
                 z-index: 10;
             }
-            .warning-indicator {
-                position: absolute;
-                top: 5px;
-                right: 5px;
-                width: 12px;
-                height: 12px;
-                background-color: #dc3545;
-                border-radius: 50%;
-                z-index: 10;
-            }
             .legend {
                 display: flex;
                 gap: 20px;
@@ -100,10 +90,6 @@
                 <div class="legend-dot" style="background-color: #28a745;"></div>
                 <span>Vacation</span>
             </div>
-            <div class="legend-item">
-                <div class="legend-dot" style="background-color: #dc3545;"></div>
-                <span>Warning</span>
-            </div>
         </div>
 
         <!-- Pagination Controls -->
@@ -135,7 +121,6 @@
             const employeesTime = @json($employees_time);
             const holidays = @json($holidays);
             const vacationDates = @json($vacation_dates);
-            const warningDates = @json($warning_dates);
             const employeeId = @json($id);
             let currentMonth = moment().month();
             let currentYear = moment().year();
@@ -228,10 +213,9 @@
                     let timeIn = timeLog ? timeLog.time_in : '';
                     let timeOut = timeLog ? timeLog.time_out : '';
 
-                    // Check if this date is a holiday, vacation day, or has warnings
+                    // Check if this date is a holiday or vacation day
                     let isHoliday = holidays.includes(dayDate);
                     let isVacation = vacationDates.includes(dayDate);
-                    let hasWarning = warningDates.includes(dayDate);
 
                     calendarHtml += `<div class="day-box" data-date="${dayDate}">`;
                     
@@ -240,8 +224,6 @@
                         calendarHtml += `<div class="holiday-indicator" title="Holiday"></div>`;
                     } else if (isVacation) {
                         calendarHtml += `<div class="vacation-indicator" title="Vacation Day"></div>`;
-                    } else if (hasWarning) {
-                        calendarHtml += `<div class="warning-indicator" title="Warning Issued"></div>`;
                     }
                     
                     calendarHtml += `<h2>${day}</h2>`;

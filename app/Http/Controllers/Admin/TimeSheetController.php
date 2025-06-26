@@ -17,67 +17,51 @@ use Illuminate\Support\Facades\Log;
 class TimeSheetController extends Controller
 {
     public function show_employee_timesheet($id)
-    {
-        // Retrieve the employee data
-        $employee = Employee::findOrFail($id);
+{
+    // Retrieve the employee data
+    $employee = Employee::findOrFail($id);
 
-        // Get the employee's time logs for the current year
-        $employees_time = TimeLog::where('employee_id', $id)
-            ->whereBetween('date', [Carbon::now()->startOfYear(), Carbon::now()->endOfYear()])
-            ->get();
+    // Get the employee's time logs for the current year
+    $employees_time = TimeLog::where('employee_id', $id)
+        ->whereBetween('date', [Carbon::now()->startOfYear(), Carbon::now()->endOfYear()])
+        ->get();
 
-        // Get holidays for the current year
-        $holidays = Holiday::whereBetween('date', [Carbon::now()->startOfYear(), Carbon::now()->endOfYear()])
-            ->get()
-            ->pluck('date')
-            ->map(function ($date) {
-                return Carbon::parse($date)->format('Y-m-d');
-            })
-            ->toArray();
+    // Get holidays for the current year
+    $holidays = Holiday::whereBetween('date', [Carbon::now()->startOfYear(), Carbon::now()->endOfYear()])
+        ->get()
+        ->pluck('date')
+        ->map(function ($date) {
+            return Carbon::parse($date)->format('Y-m-d');
+        })
+        ->toArray();
 
-        // Get approved vacations for the employee for the current year
-        $vacations = $employee->vacations()
-            ->approved()
-            ->whereBetween('start_date', [Carbon::now()->startOfYear(), Carbon::now()->endOfYear()])
-            ->get();
+    // Get approved vacations for the employee for the current year
+    $vacations = $employee->vacations()
+        ->approved()
+        ->whereBetween('start_date', [Carbon::now()->startOfYear(), Carbon::now()->endOfYear()])
+        ->get();
 
-        // Create an array of vacation dates
-        $vacation_dates = [];
-        foreach ($vacations as $vacation) {
-            $start = Carbon::parse($vacation->start_date);
-            $end = Carbon::parse($vacation->end_date);
+    // Create an array of vacation dates
+    $vacation_dates = [];
+    foreach ($vacations as $vacation) {
+        $start = Carbon::parse($vacation->start_date);
+        $end = Carbon::parse($vacation->end_date);
 
-            while ($start <= $end) {
-                $vacation_dates[] = $start->format('Y-m-d');
-                $start->addDay();
-            }
+        while ($start <= $end) {
+            $vacation_dates[] = $start->format('Y-m-d');
+            $start->addDay();
         }
-
-        // Get warnings for the employee for the current year and create array of dates
-        $warning_dates = [];
-        $warningRecords = Warning::where('employee_id', $id)
-            ->whereBetween('created_at', [Carbon::now()->startOfYear(), Carbon::now()->endOfYear()])
-            ->whereIn('warning_title', ['Late Arrival', 'Early Checkout'])
-            ->get();
-
-        // For each warning, get the date it was created (assuming warning is created on the same day as the incident)
-        foreach ($warningRecords as $warning) {
-            $warning_dates[] = Carbon::parse($warning->created_at)->format('Y-m-d');
-        }
-
-        // Remove duplicates
-        $warning_dates = array_unique($warning_dates);
-
-        // Pass all data to the view
-        return view('admin.employees.timesheet.index', compact(
-            'employees_time',
-            'employee',
-            'id',
-            'holidays',
-            'vacation_dates',
-            'warning_dates'
-        ));
     }
+
+    // Pass all data to the view
+    return view('admin.employees.timesheet.index', compact(
+        'employees_time',
+        'employee',
+        'id',
+        'holidays',
+        'vacation_dates'
+    ));
+}
 
     public function update(Request $request, $id)
     {
