@@ -15,6 +15,61 @@
 
         <!-- Link to the external CSS file -->
         <link href="{{ asset('assets/css/timesheet.css') }}" rel="stylesheet" />
+        
+        <!-- Add custom styles for indicators -->
+        <style>
+            .day-box {
+                position: relative;
+            }
+            .holiday-indicator {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                width: 12px;
+                height: 12px;
+                background-color: #007bff;
+                border-radius: 50%;
+                z-index: 10;
+            }
+            .vacation-indicator {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                width: 12px;
+                height: 12px;
+                background-color: #28a745;
+                border-radius: 50%;
+                z-index: 10;
+            }
+            .warning-indicator {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                width: 12px;
+                height: 12px;
+                background-color: #dc3545;
+                border-radius: 50%;
+                z-index: 10;
+            }
+            .legend {
+                display: flex;
+                gap: 20px;
+                margin-bottom: 20px;
+                padding: 10px;
+                background-color: #f8f9fa;
+                border-radius: 5px;
+            }
+            .legend-item {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+            .legend-dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+            }
+        </style>
 
         <!-- Year and Month Filter -->
         <div class="filter-container mb-3">
@@ -33,6 +88,22 @@
                 </select>
             </div>
             <button id="filter-btn" class="btn btn-primary">Filter</button>
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-dot" style="background-color: #007bff;"></div>
+                <span>Holiday</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background-color: #28a745;"></div>
+                <span>Vacation</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-dot" style="background-color: #dc3545;"></div>
+                <span>Warning</span>
+            </div>
         </div>
 
         <!-- Pagination Controls -->
@@ -62,7 +133,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const employeesTime = @json($employees_time);
-            const employeeId = @json($id); // Pass the ID directly to JavaScript
+            const holidays = @json($holidays);
+            const vacationDates = @json($vacation_dates);
+            const warningDates = @json($warning_dates);
+            const employeeId = @json($id);
             let currentMonth = moment().month();
             let currentYear = moment().year();
             let isEditMode = false;
@@ -70,13 +144,13 @@
 
             document.getElementById('edit-mode').addEventListener('click', () => {
                 isEditMode = !isEditMode;
-                isCreateMode = false; // Disable create mode if editing
+                isCreateMode = false;
                 generateCalendar(currentMonth, currentYear);
             });
 
             document.getElementById('create-mode').addEventListener('click', () => {
                 isCreateMode = !isCreateMode;
-                isEditMode = false; // Disable edit mode if creating
+                isEditMode = false;
                 generateCalendar(currentMonth, currentYear);
             });
 
@@ -87,11 +161,12 @@
                 currentMonth = selectedMonth;
                 generateCalendar(currentMonth, currentYear);
             });
+
             document.getElementById('prev-month').addEventListener('click', () => {
                 currentMonth -= 1;
                 if (currentMonth < 0) {
-                    currentMonth = 11; // Go to December if it's January
-                    currentYear -= 1;  // Go back one year
+                    currentMonth = 11;
+                    currentYear -= 1;
                 }
                 generateCalendar(currentMonth, currentYear);
             });
@@ -99,38 +174,32 @@
             document.getElementById('next-month').addEventListener('click', () => {
                 currentMonth += 1;
                 if (currentMonth > 11) {
-                    currentMonth = 0; // Go to January if it's December
-                    currentYear += 1; // Go to next year
+                    currentMonth = 0;
+                    currentYear += 1;
                 }
                 generateCalendar(currentMonth, currentYear);
             });
+
             function calculateTotalHours() {
                 let totalHours = 0;
 
-                // Get the current displayed month and year in YYYY-MM format
                 const currentMonthStart = moment().year(currentYear).month(currentMonth).startOf('month').format('YYYY-MM-DD');
                 const currentMonthEnd = moment().year(currentYear).month(currentMonth).endOf('month').format('YYYY-MM-DD');
 
                 employeesTime.forEach(log => {
-                    // Only calculate if both time_in and time_out are not null/empty
-                    // AND the log date is within the current displayed month
                     if (log.time_in && log.time_out && log.date >= currentMonthStart && log.date <= currentMonthEnd) {
                         const timeIn = moment(log.time_in, 'HH:mm:ss');
                         const timeOut = moment(log.time_out, 'HH:mm:ss');
-                        totalHours += timeOut.diff(timeIn, 'hours', true); // Calculate difference in hours
+                        totalHours += timeOut.diff(timeIn, 'hours', true);
                     }
                 });
 
-                // Convert total hours to hours, minutes, seconds
                 const hours = Math.floor(totalHours);
                 const minutes = Math.floor((totalHours - hours) * 60);
                 const seconds = Math.floor(((totalHours - hours) * 60 - minutes) * 60);
 
-                // Update the display to show it's for the current month
                 const monthName = moment().month(currentMonth).format('MMMM');
                 document.getElementById('total-hours-text').innerText = `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
-                // Optional: Update the label to show which month
                 document.querySelector('#total-hours p strong').innerText = `Total Hours Worked (${monthName} ${currentYear}): `;
             }
 
@@ -159,7 +228,22 @@
                     let timeIn = timeLog ? timeLog.time_in : '';
                     let timeOut = timeLog ? timeLog.time_out : '';
 
+                    // Check if this date is a holiday, vacation day, or has warnings
+                    let isHoliday = holidays.includes(dayDate);
+                    let isVacation = vacationDates.includes(dayDate);
+                    let hasWarning = warningDates.includes(dayDate);
+
                     calendarHtml += `<div class="day-box" data-date="${dayDate}">`;
+                    
+                    // Add indicator dots
+                    if (isHoliday) {
+                        calendarHtml += `<div class="holiday-indicator" title="Holiday"></div>`;
+                    } else if (isVacation) {
+                        calendarHtml += `<div class="vacation-indicator" title="Vacation Day"></div>`;
+                    } else if (hasWarning) {
+                        calendarHtml += `<div class="warning-indicator" title="Warning Issued"></div>`;
+                    }
+                    
                     calendarHtml += `<h2>${day}</h2>`;
 
                     if (timeLog) {
@@ -172,7 +256,6 @@
                             <button class="save-edit-btn btn btn-sm btn-primary" data-date="${dayDate}">Save</button>
                         `;
                         } else {
-                            // Display "Not Set" for null/empty values
                             let displayTimeIn = timeIn ? timeIn : 'Not Set';
                             let displayTimeOut = timeOut ? timeOut : 'Not Set';
 
@@ -189,7 +272,6 @@
                             <button class="save-create-btn btn btn-sm btn-success" data-date="${dayDate}">Create</button>
                         `;
                         } else {
-                            // Don't display "No data" text for print
                             calendarHtml += '';
                         }
                     }
@@ -209,7 +291,6 @@
                         let timeOut = document.querySelector(`.time-out-input[data-date="${date}"]`).value;
                         let logId = this.closest('.day-box').querySelector('.log-id-input').value;
                         let employeeId = document.querySelector('.employee-id-input').value;
-                        console.log("Log ID from input field:", logId);
                         updateTimeLog(logId, timeIn, timeOut, employeeId);
                         calculateTotalHours();
                     });
@@ -227,13 +308,12 @@
             }
 
             function updateTimeLog(logId, timeIn, timeOut, employeeId) {
-                // Don't force time_out to 16:00 - send as is (can be empty/null)
                 fetch("{{ route('employee.timelogs.update', ['id' => ':id']) }}".replace(':id', logId), {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
                     body: JSON.stringify({
                         time_in: timeIn,
-                        time_out: timeOut // Send as is - can be empty string or null
+                        time_out: timeOut
                     })
                 }).then(response => response.json()).then(data => {
                     if (data.message === 'Time Log updated successfully') {
@@ -256,14 +336,13 @@
             }
 
             function createTimeLog(date, timeIn, timeOut) {
-                // Don't force time_out to 16:00 - send as is (can be empty/null)
                 fetch("{{ route('employee.timelogs.store', ['id' => $id]) }}", {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
                     body: JSON.stringify({
                         date: date,
                         time_in: timeIn,
-                        time_out: timeOut, // Send as is - can be empty string or null
+                        time_out: timeOut,
                         employee_id: '{{ $employee->id }}'
                     })
                 }).then(response => response.json()).then(data => {
@@ -285,7 +364,6 @@
                     }
                 });
             }
-
 
             generateCalendar(currentMonth, currentYear);
         });

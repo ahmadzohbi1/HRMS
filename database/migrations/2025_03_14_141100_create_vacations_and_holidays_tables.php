@@ -24,14 +24,12 @@ return new class extends Migration {
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();
         });
-
         Schema::create('holidays', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->date('date')->unique();
             $table->timestamps();
         });
-
         Schema::create('employee_vacation_balances', function (Blueprint $table) {
             $table->id();
             $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');

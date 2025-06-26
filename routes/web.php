@@ -17,7 +17,8 @@ use App\Http\Controllers\Admin\{
     TimeSheetController,
     VacationController,
     VacationTypeController,
-    EmployeeVacationBalanceController
+    EmployeeVacationBalanceController,
+    HolidayController
 };
 use App\Http\Controllers\Admin\Employees\{
     SalaryController,
@@ -175,8 +176,6 @@ Route::group(["prefix" => 'dashboard'], function () {
                     ->middleware('permission:delete positions')
                     ->name('delete');
             });
-            /* ================== Hour_Rate ROUTES ================== */
-            
             /* ================== Salaries ROUTES ================== */
             Route::prefix('salaries')->name('salaries.')->group(function () {
                 // Main Salary Routes
@@ -201,7 +200,6 @@ Route::group(["prefix" => 'dashboard'], function () {
                 Route::delete('/{salary}', [SalaryController::class, 'destroy'])
                     ->middleware('permission:delete salaries')
                     ->name('destroy');
-                
                 // Advance Routes (nested under salaries)
                 Route::prefix('{salary}/advances')->name('advances.')->group(function () {
                     Route::get('/create', [SalaryController::class, 'createAdvance'])
@@ -220,7 +218,7 @@ Route::group(["prefix" => 'dashboard'], function () {
                         ->middleware('permission:delete salaries')
                         ->name('destroy');
                 });
-                
+
                 // Bonus Routes (nested under salaries)
                 Route::prefix('{salary}/bonuses')->name('bonuses.')->group(function () {
                     Route::get('/create', [SalaryController::class, 'createBonus'])
@@ -240,7 +238,7 @@ Route::group(["prefix" => 'dashboard'], function () {
                         ->name('destroy');
                 });
             });
-            
+
             /* ================== Shifts ROUTES ================== */
             Route::prefix('shifts')->name('shifts.')->group(function () {
                 Route::get('/', [ShiftController::class, 'index'])
@@ -390,6 +388,28 @@ Route::group(["prefix" => 'dashboard'], function () {
                     ->middleware('permission:create vacations')
                     ->name('bulk.store');
             });
+
+            Route::get('/holidays', [HolidayController::class, 'index'])
+                ->middleware('permission:create vacations')
+                ->name('holidays.index');
+            Route::get('/holidays/create', [HolidayController::class, 'create'])
+                ->middleware('permission:create vacations')
+                ->name('holidays.create');
+            Route::post('/holidays', [HolidayController::class, 'store'])
+                ->middleware('permission:create vacations')
+                ->name('holidays.store');
+            Route::get('/holidays/{holiday}', [HolidayController::class, 'show'])
+                ->middleware('permission:create vacations')
+                ->name('holidays.show');
+            Route::get('/holidays/{holiday}/edit', [HolidayController::class, 'edit'])
+                ->middleware('permission:create vacations')
+                ->name('holidays.edit');
+            Route::put('/holidays/{holiday}', [HolidayController::class, 'update'])
+                ->middleware('permission:create vacations')
+                ->name('holidays.update');
+            Route::delete('/holidays/{holiday}', [HolidayController::class, 'destroy'])
+                ->middleware('permission:delete vacations')
+                ->name('holidays.destroy');
         });
     });
 });
@@ -404,15 +424,6 @@ Route::post('/delete-temp-file', [HomeController::class, 'deleteTempFile'])->nam
 Route::get('{any}', [HomeController::class, 'index'])->name('index');
 
 Route::get('/vacation-request/index', [VacationRequestController::class, 'index'])->name('vacation-request.index');
-
 // New routes for form submission and API
 Route::post('/vacation-request/store', [VacationRequestController::class, 'store'])->name('vacation-request.store');
 Route::get('/api/vacation-balance/{employeeId}/{vacationTypeId}', [VacationRequestController::class, 'getVacationBalance']);
-
-// Optional: Admin routes for managing vacation requests
-// Route::prefix('admin')->name('admin.')->group(function () {
-//     Route::get('/vacations', [AdminVacationController::class, 'index'])->name('vacations.index');
-//     Route::get('/vacations/{vacation}', [AdminVacationController::class, 'show'])->name('vacations.show');
-//     Route::patch('/vacations/{vacation}/approve', [AdminVacationController::class, 'approve'])->name('vacations.approve');
-//     Route::patch('/vacations/{vacation}/reject', [AdminVacationController::class, 'reject'])->name('vacations.reject');
-// });

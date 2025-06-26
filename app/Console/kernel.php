@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        Commands\AutoStopWork::class,
     ];
 
     /**
@@ -24,7 +24,19 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('clean:tmp')->weekly();
+        // Production-optimized auto-stop command
+        $schedule->command('work:auto-stop')
+                 ->everyMinute()
+                 ->withoutOverlapping()
+                 ->runInBackground()
+                 ->appendOutputTo(storage_path('logs/auto-stop.log'));
+
+        // Alternative: Run every 5 minutes for less server load
+        // $schedule->command('work:auto-stop')
+        //          ->everyFiveMinutes()
+        //          ->withoutOverlapping()
+        //          ->runInBackground()
+        //          ->appendOutputTo(storage_path('logs/auto-stop.log'));
     }
 
     /**
