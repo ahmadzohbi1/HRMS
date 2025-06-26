@@ -53,16 +53,20 @@ class TimeSheetController extends Controller
             }
         }
 
-        // Get warnings for the employee for the current year
-        $warnings = Warning::where('employee_id', $id)
+        // Get warnings for the employee for the current year and create array of dates
+        $warning_dates = [];
+        $warningRecords = Warning::where('employee_id', $id)
             ->whereBetween('created_at', [Carbon::now()->startOfYear(), Carbon::now()->endOfYear()])
             ->whereIn('warning_title', ['Late Arrival', 'Early Checkout'])
-            ->get()
-            ->groupBy(function ($warning) {
-                return Carbon::parse($warning->created_at)->format('Y-m-d');
-            })
-            ->keys()
-            ->toArray();
+            ->get();
+
+        // For each warning, get the date it was created (assuming warning is created on the same day as the incident)
+        foreach ($warningRecords as $warning) {
+            $warning_dates[] = Carbon::parse($warning->created_at)->format('Y-m-d');
+        }
+
+        // Remove duplicates
+        $warning_dates = array_unique($warning_dates);
 
         // Pass all data to the view
         return view('admin.employees.timesheet.index', compact(
@@ -71,7 +75,7 @@ class TimeSheetController extends Controller
             'id',
             'holidays',
             'vacation_dates',
-            'warnings'
+            'warning_dates'
         ));
     }
 
@@ -142,120 +146,120 @@ class TimeSheetController extends Controller
     }
 
     public function startWork(Request $request)
-{
-    $employeeId = $request->input('employee_id');
-    $time_in = Carbon::now(); // Get current time for the employee's time in
-    $today = $time_in->format('Y-m-d'); // Get today's date
+    {
+        $employeeId = $request->input('employee_id');
+        $time_in = Carbon::now(); // Get current time for the employee's time in
+        $today = $time_in->format('Y-m-d'); // Get today's date
 
-    if (!$employeeId) {
-        Log::error('Employee ID is required.');
-        return response()->json(['error' => 'Employee ID is required.'], 400);
-    }
+        if (!$employeeId) {
+            Log::error('Employee ID is required.');
+            return response()->json(['error' => 'Employee ID is required.'], 400);
+        }
 
-    // Check if today is a holiday
-    $isHoliday = Holiday::whereDate('date', $today)->exists();
-    
-    // Check if employee has approved vacation today
-    $employee = Employee::findOrFail($employeeId);
-    $hasVacationToday = $employee->vacations()
-        ->approved()
-        ->where(function($query) use ($today) {
-            $query->whereDate('start_date', '<=', $today)
-                  ->whereDate('end_date', '>=', $today);
-        })
-        ->exists();
+        // Check if today is a holiday
+        $isHoliday = Holiday::whereDate('date', $today)->exists();
 
-    // Check if the employee has already started work today
-    $existingLog = TimeLog::where('employee_id', $employeeId)
-        ->whereDate('date', $today)
-        ->first();
+        // Check if employee has approved vacation today
+        $employee = Employee::findOrFail($employeeId);
+        $hasVacationToday = $employee->vacations()
+            ->approved()
+            ->where(function ($query) use ($today) {
+                $query->whereDate('start_date', '<=', $today)
+                    ->whereDate('end_date', '>=', $today);
+            })
+            ->exists();
 
-    if ($existingLog) {
-        Log::info("Employee $employeeId has already started work today.");
-        return response()->json(['error' => 'You have already started work today.'], 400);
-    }
+        // Check if the employee has already started work today
+        $existingLog = TimeLog::where('employee_id', $employeeId)
+            ->whereDate('date', $today)
+            ->first();
 
-    // Select the correct shift for the employee
-    $employeeShift = Shift::where('employee_id', $employeeId)->first();
+        if ($existingLog) {
+            Log::info("Employee $employeeId has already started work today.");
+            return response()->json(['error' => 'You have already started work today.'], 400);
+        }
 
-    if ($employeeShift) {
-        Log::info("Employee $employeeId has a personal shift.", ['shift' => $employeeShift]);
-        $shift = $employeeShift; // Use the employee's personal shift
-    } else {
-        $shift = Shift::where('company_shift', 1)->first(); // Fallback to company shift
-        Log::info("Employee $employeeId does not have a personal shift. Using company shift.", ['shift' => $shift]);
-    }
+        // Select the correct shift for the employee
+        $employeeShift = Shift::where('employee_id', $employeeId)->first();
 
-    if (!$shift) {
-        Log::error("No shift found for employee $employeeId.");
-        return response()->json(['error' => 'No shift found.'], 404);
-    }
+        if ($employeeShift) {
+            Log::info("Employee $employeeId has a personal shift.", ['shift' => $employeeShift]);
+            $shift = $employeeShift; // Use the employee's personal shift
+        } else {
+            $shift = Shift::where('company_shift', 1)->first(); // Fallback to company shift
+            Log::info("Employee $employeeId does not have a personal shift. Using company shift.", ['shift' => $shift]);
+        }
 
-    // Log selected shift details
-    Log::info('Selected shift:', ['shift' => $shift]);
+        if (!$shift) {
+            Log::error("No shift found for employee $employeeId.");
+            return response()->json(['error' => 'No shift found.'], 404);
+        }
 
-    // Get shift rules
-    $shiftRules = $shift->shiftRules;
+        // Log selected shift details
+        Log::info('Selected shift:', ['shift' => $shift]);
 
-    // Log shift rules
-    Log::info('Shift rules:', ['rules' => $shiftRules]);
+        // Get shift rules
+        $shiftRules = $shift->shiftRules;
 
-    // Get shift time_in as Carbon instance
-    $shiftTimeIn = Carbon::createFromFormat('H:i:s', $shift->time_in);
+        // Log shift rules
+        Log::info('Shift rules:', ['rules' => $shiftRules]);
 
-    // Log time_in
-    Log::info("Employee $employeeId time_in: $time_in");
+        // Get shift time_in as Carbon instance
+        $shiftTimeIn = Carbon::createFromFormat('H:i:s', $shift->time_in);
 
-    // Only check shift rules for late arrival if it's NOT a holiday and employee doesn't have vacation
-    if (!$isHoliday && !$hasVacationToday) {
-        foreach ($shiftRules as $rule) {
-            Log::info("Checking rule: " . $rule->shift_title);
+        // Log time_in
+        Log::info("Employee $employeeId time_in: $time_in");
 
-            // Calculate the lateness window based on the rule
-            $lateThreshold = $shiftTimeIn->addMinutes($rule->time_in_apply); // Shift time_in + late minutes
+        // Only check shift rules for late arrival if it's NOT a holiday and employee doesn't have vacation
+        if (!$isHoliday && !$hasVacationToday) {
+            foreach ($shiftRules as $rule) {
+                Log::info("Checking rule: " . $rule->shift_title);
 
-            if ($time_in > $lateThreshold) {
-                Log::info("Late arrival detected for employee $employeeId.");
+                // Calculate the lateness window based on the rule
+                $lateThreshold = $shiftTimeIn->addMinutes($rule->time_in_apply); // Shift time_in + late minutes
 
-                if ($rule->deduct_hours) {
-                    Log::info("Deducting hours for employee $employeeId based on rule.");
-                    // Apply time deduction
-                    $this->applyTimeDeduction($employeeId, $rule->day_hours_deduction);
-                } else {
-                    Log::info("Issuing warning for employee $employeeId.");
-                    // Add a warning if no deduction is applied
-                    Warning::create([
-                        'employee_id' => $employeeId,
-                        'warning_title' => 'Late Arrival',
-                        'warning_description' => $rule->warning_description ?: 'Late for shift'
-                    ]);
+                if ($time_in > $lateThreshold) {
+                    Log::info("Late arrival detected for employee $employeeId.");
+
+                    if ($rule->deduct_hours) {
+                        Log::info("Deducting hours for employee $employeeId based on rule.");
+                        // Apply time deduction
+                        $this->applyTimeDeduction($employeeId, $rule->day_hours_deduction);
+                    } else {
+                        Log::info("Issuing warning for employee $employeeId.");
+                        // Add a warning if no deduction is applied
+                        Warning::create([
+                            'employee_id' => $employeeId,
+                            'warning_title' => 'Late Arrival',
+                            'warning_description' => $rule->warning_description ?: 'Late for shift'
+                        ]);
+                    }
                 }
             }
+        } else {
+            if ($isHoliday) {
+                Log::info("Employee $employeeId is working on a holiday - no warnings applied.");
+            }
+            if ($hasVacationToday) {
+                Log::info("Employee $employeeId has approved vacation today - no warnings applied.");
+            }
         }
-    } else {
-        if ($isHoliday) {
-            Log::info("Employee $employeeId is working on a holiday - no warnings applied.");
-        }
-        if ($hasVacationToday) {
-            Log::info("Employee $employeeId has approved vacation today - no warnings applied.");
-        }
+
+        // Create the time log
+        $timeLog = TimeLog::create([
+            'employee_id' => $employeeId,
+            'date' => $today,
+            'time_in' => $time_in->format('H:i:s'),
+            'time_out' => null
+        ]);
+
+        Log::info("Time log created for employee $employeeId with time_in: " . $time_in->format('H:i:s'));
+
+        return response()->json([
+            'message' => 'Work started successfully',
+            'time_in' => $timeLog->time_in
+        ]);
     }
-
-    // Create the time log
-    $timeLog = TimeLog::create([
-        'employee_id' => $employeeId,
-        'date' => $today,
-        'time_in' => $time_in->format('H:i:s'),
-        'time_out' => null
-    ]);
-
-    Log::info("Time log created for employee $employeeId with time_in: " . $time_in->format('H:i:s'));
-
-    return response()->json([
-        'message' => 'Work started successfully',
-        'time_in' => $timeLog->time_in
-    ]);
-}
 
 
     public function stopWork(Request $request)
@@ -422,49 +426,49 @@ class TimeSheetController extends Controller
     }
 
     public function updateSalary($employeeId)
-{
-    // Get total hours for current month from timesheet_employees table
-    $currentMonth = Carbon::now()->format('Y-m');
-    
-    $timesheetEmployee = TimesheetEmployee::where('employee_id', $employeeId)
-        ->where('month', $currentMonth)
-        ->first();
+    {
+        // Get total hours for current month from timesheet_employees table
+        $currentMonth = Carbon::now()->format('Y-m');
 
-    $totalHours = $timesheetEmployee ? $timesheetEmployee->total_hours_month : '00:00:00';
+        $timesheetEmployee = TimesheetEmployee::where('employee_id', $employeeId)
+            ->where('month', $currentMonth)
+            ->first();
 
-    // Get hourly rate for the employee
-    $hourRate = HourRate::where('employee_id', $employeeId)
-        ->value('hour_rate');
+        $totalHours = $timesheetEmployee ? $timesheetEmployee->total_hours_month : '00:00:00';
 
-    $hourRate = $hourRate ?? 0;
+        // Get hourly rate for the employee
+        $hourRate = HourRate::where('employee_id', $employeeId)
+            ->value('hour_rate');
 
-    \Log::info("Employee $employeeId - Total Hours: $totalHours, Hourly Rate: $hourRate");
+        $hourRate = $hourRate ?? 0;
 
-    // Convert time to numeric hours
-    list($hours, $minutes, $seconds) = explode(":", $totalHours);
-    $totalHoursNumeric = $hours + ($minutes / 60) + ($seconds / 3600);
+        \Log::info("Employee $employeeId - Total Hours: $totalHours, Hourly Rate: $hourRate");
 
-    $calculatedSalary = $totalHoursNumeric * $hourRate;
+        // Convert time to numeric hours
+        list($hours, $minutes, $seconds) = explode(":", $totalHours);
+        $totalHoursNumeric = $hours + ($minutes / 60) + ($seconds / 3600);
 
-    \Log::info("Employee $employeeId - Calculated Salary: $calculatedSalary");
+        $calculatedSalary = $totalHoursNumeric * $hourRate;
 
-    // Check what columns your Salary table actually has
-    // For now, just update the basic salary without month filtering
-    $salaryEmployee = Salary::where('employee_id', $employeeId)->first();
+        \Log::info("Employee $employeeId - Calculated Salary: $calculatedSalary");
 
-    if ($salaryEmployee) {
-        $salaryEmployee->update([
-            'salary' => $calculatedSalary,
-        ]);
-        \Log::info("Updated salary for employee $employeeId to $calculatedSalary");
-    } else {
-        Salary::create([
-            'employee_id' => $employeeId,
-            'salary' => $calculatedSalary,
-        ]);
-        \Log::info("Created new salary record for employee $employeeId with salary $calculatedSalary");
+        // Check what columns your Salary table actually has
+        // For now, just update the basic salary without month filtering
+        $salaryEmployee = Salary::where('employee_id', $employeeId)->first();
+
+        if ($salaryEmployee) {
+            $salaryEmployee->update([
+                'salary' => $calculatedSalary,
+            ]);
+            \Log::info("Updated salary for employee $employeeId to $calculatedSalary");
+        } else {
+            Salary::create([
+                'employee_id' => $employeeId,
+                'salary' => $calculatedSalary,
+            ]);
+            \Log::info("Created new salary record for employee $employeeId with salary $calculatedSalary");
+        }
     }
-}
     public function getTimeLogs(Request $request)
     {
         $employeeIds = $request->input('employee_ids');
