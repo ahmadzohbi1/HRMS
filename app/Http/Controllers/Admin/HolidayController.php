@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-
 use App\Http\Controllers\Controller;
 use App\Models\Holiday;
 use Illuminate\Http\Request;
@@ -17,6 +16,22 @@ class HolidayController extends Controller
         $holidays = Holiday::orderBy('date')->get();
         
         return view('admin.holidays.index', compact('holidays'));
+    }
+
+    /**
+     * Display the holiday calendar view for employees.
+     */
+    public function calendar()
+    {
+        // Get all holidays and format them for JavaScript
+        $holidays = Holiday::orderBy('date')->get()->map(function ($holiday) {
+            return [
+                'name' => $holiday->name,
+                'date' => $holiday->date->format('Y-m-d')
+            ];
+        });
+
+        return view('default.holiday-calendar', compact('holidays'));
     }
 
     /**

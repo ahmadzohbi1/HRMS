@@ -427,3 +427,5 @@ Route::get('/vacation-request/index', [VacationRequestController::class, 'index'
 // New routes for form submission and API
 Route::post('/vacation-request/store', [VacationRequestController::class, 'store'])->name('vacation-request.store');
 Route::get('/api/vacation-balance/{employeeId}/{vacationTypeId}', [VacationRequestController::class, 'getVacationBalance']);
+Route::get('/holiday/calender', [HolidayController::class, 'calendar']);
+

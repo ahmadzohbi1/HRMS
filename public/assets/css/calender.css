@@ -1,0 +1,330 @@
+/* Holiday Calendar Styles */
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.calendar-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin: 20px auto;
+    max-width: 1200px;
+}
+
+.calendar-header {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    padding: 30px;
+    border-radius: 20px 20px 0 0;
+    text-align: center;
+    position: relative;
+}
+
+.calendar-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.month-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.nav-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1.1rem;
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.current-month {
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    background: #e5e7eb;
+    border-radius: 0 0 20px 20px;
+    overflow: hidden;
+}
+
+.calendar-day-header {
+    background: #374151;
+    color: white;
+    padding: 20px 10px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.calendar-day {
+    background: white;
+    min-height: 120px;
+    padding: 15px 10px;
+    position: relative;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.calendar-day:hover {
+    background: #f8fafc;
+    transform: scale(1.02);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-day.other-month {
+    background: #f9fafb;
+    color: #9ca3af;
+}
+
+.calendar-day.today {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: white;
+    font-weight: bold;
+}
+
+.calendar-day.holiday {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+}
+
+.calendar-day.holiday:hover {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+}
+
+.day-number {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.holiday-indicator {
+    background: rgba(255, 255, 255, 0.9);
+    color: #dc2626;
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: inline-block;
+    margin-bottom: 5px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.calendar-day.holiday .holiday-indicator {
+    background: rgba(255, 255, 255, 0.9);
+    color: #dc2626;
+}
+
+.holiday-list {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    padding: 25px;
+    margin: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.holiday-item {
+    background: linear-gradient(135deg, #fee2e2, #fecaca);
+    border: 1px solid #fca5a5;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.holiday-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.holiday-item:last-child {
+    margin-bottom: 0;
+}
+
+.holiday-name {
+    font-weight: 600;
+    color: #dc2626;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.holiday-date {
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.no-holidays {
+    text-align: center;
+    color: #6b7280;
+    font-style: italic;
+    padding: 40px;
+}
+
+.legend {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.legend-today {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+}
+
+.legend-holiday {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+/* Loading animation */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    color: #6b7280;
+}
+
+.loading i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .calendar-container {
+        margin: 10px;
+    }
+    
+    .calendar-header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .current-month {
+        font-size: 1.4rem;
+    }
+    
+    .calendar-day {
+        min-height: 80px;
+        padding: 8px 5px;
+    }
+    
+    .day-number {
+        font-size: 1rem;
+    }
+    
+    .holiday-indicator {
+        font-size: 0.7rem;
+        padding: 2px 6px;
+    }
+    
+    .month-navigation {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .nav-btn {
+        padding: 10px 15px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .calendar-header {
+        padding: 20px 15px;
+    }
+    
+    .calendar-header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .current-month {
+        font-size: 1.2rem;
+    }
+    
+    .calendar-day {
+        min-height: 60px;
+        padding: 5px 3px;
+    }
+    
+    .day-number {
+        font-size: 0.9rem;
+    }
+    
+    .holiday-indicator {
+        font-size: 0.6rem;
+        padding: 1px 4px;
+    }
+    
+    .legend {
+        gap: 15px;
+    }
+    
+    .legend-item {
+        font-size: 0.8rem;
+    }
+}
+
+/* Print styles */
+@media print {
+    body {
+        background: white;
+    }
+    
+    .calendar-container {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+    
+    .nav-btn {
+        display: none;
+    }
+    
+    .calendar-day:hover {
+        transform: none;
+        box-shadow: none;
+    }
+}
