@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Employee;
 use App\Models\Employees\Salary;
 use App\Models\Employees\TimesheetEmployee;
-use App\Models\Employees\HourRate;
+// Remove this import since you don't want hour rates
+// use App\Models\Employees\HourRate;
 use App\Models\TimeLog;
 use App\Models\Holiday;
 use App\Models\Warning;
@@ -14,54 +15,55 @@ use App\Models\Employees\Shift;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
+
 class TimeSheetController extends Controller
 {
     public function show_employee_timesheet($id)
-{
-    // Retrieve the employee data
-    $employee = Employee::findOrFail($id);
+    {
+        // Retrieve the employee data
+        $employee = Employee::findOrFail($id);
 
-    // Get the employee's time logs for the current year
-    $employees_time = TimeLog::where('employee_id', $id)
-        ->whereBetween('date', [Carbon::now()->startOfYear(), Carbon::now()->endOfYear()])
-        ->get();
+        // Get the employee's time logs for the current year
+        $employees_time = TimeLog::where('employee_id', $id)
+            ->whereBetween('date', [Carbon::now()->startOfYear(), Carbon::now()->endOfYear()])
+            ->get();
 
-    // Get holidays for the current year
-    $holidays = Holiday::whereBetween('date', [Carbon::now()->startOfYear(), Carbon::now()->endOfYear()])
-        ->get()
-        ->pluck('date')
-        ->map(function ($date) {
-            return Carbon::parse($date)->format('Y-m-d');
-        })
-        ->toArray();
+        // Get holidays for the current year
+        $holidays = Holiday::whereBetween('date', [Carbon::now()->startOfYear(), Carbon::now()->endOfYear()])
+            ->get()
+            ->pluck('date')
+            ->map(function ($date) {
+                return Carbon::parse($date)->format('Y-m-d');
+            })
+            ->toArray();
 
-    // Get approved vacations for the employee for the current year
-    $vacations = $employee->vacations()
-        ->approved()
-        ->whereBetween('start_date', [Carbon::now()->startOfYear(), Carbon::now()->endOfYear()])
-        ->get();
+        // Get approved vacations for the employee for the current year
+        $vacations = $employee->vacations()
+            ->approved()
+            ->whereBetween('start_date', [Carbon::now()->startOfYear(), Carbon::now()->endOfYear()])
+            ->get();
 
-    // Create an array of vacation dates
-    $vacation_dates = [];
-    foreach ($vacations as $vacation) {
-        $start = Carbon::parse($vacation->start_date);
-        $end = Carbon::parse($vacation->end_date);
+        // Create an array of vacation dates
+        $vacation_dates = [];
+        foreach ($vacations as $vacation) {
+            $start = Carbon::parse($vacation->start_date);
+            $end = Carbon::parse($vacation->end_date);
 
-        while ($start <= $end) {
-            $vacation_dates[] = $start->format('Y-m-d');
-            $start->addDay();
+            while ($start <= $end) {
+                $vacation_dates[] = $start->format('Y-m-d');
+                $start->addDay();
+            }
         }
-    }
 
-    // Pass all data to the view
-    return view('admin.employees.timesheet.index', compact(
-        'employees_time',
-        'employee',
-        'id',
-        'holidays',
-        'vacation_dates'
-    ));
-}
+        // Pass all data to the view
+        return view('admin.employees.timesheet.index', compact(
+            'employees_time',
+            'employee',
+            'id',
+            'holidays',
+            'vacation_dates'
+        ));
+    }
 
     public function update(Request $request, $id)
     {
@@ -245,7 +247,6 @@ class TimeSheetController extends Controller
         ]);
     }
 
-
     public function stopWork(Request $request)
     {
         $employeeId = $request->input('employee_id');
@@ -294,9 +295,8 @@ class TimeSheetController extends Controller
         // Update the time_out field for today
         $timeLog->update(['time_out' => $time_out]);
 
-        // Update timesheet and salary after logging time out
+        // Update timesheet after logging time out (removed salary update)
         $this->updateTimesheetEmployee($employeeId, Carbon::now()->month, Carbon::now()->year);
-        $this->updateSalary($employeeId);
 
         return response()->json(['time_out' => $timeLog->time_out]);
     }
@@ -323,9 +323,6 @@ class TimeSheetController extends Controller
 
             // Update the timesheet with the new total hours
             $timesheet->update(['total_hours_month' => $newTotalTime]);
-
-            // Also update the salary after the deduction
-            $this->updateSalary($employeeId);
         }
     }
 
@@ -404,55 +401,11 @@ class TimeSheetController extends Controller
                 'total_hours_month' => $totalTime,
             ]
         );
-
-        // Optionally, update salary after updating timesheet
-        $this->updateSalary($employeeId);
     }
 
-    public function updateSalary($employeeId)
-    {
-        // Get total hours for current month from timesheet_employees table
-        $currentMonth = Carbon::now()->format('Y-m');
+    // REMOVED: updateSalary method that was causing the hour_rates error
+    // If you need salary calculations in the future, implement them without hour rates
 
-        $timesheetEmployee = TimesheetEmployee::where('employee_id', $employeeId)
-            ->where('month', $currentMonth)
-            ->first();
-
-        $totalHours = $timesheetEmployee ? $timesheetEmployee->total_hours_month : '00:00:00';
-
-        // Get hourly rate for the employee
-        $hourRate = HourRate::where('employee_id', $employeeId)
-            ->value('hour_rate');
-
-        $hourRate = $hourRate ?? 0;
-
-        \Log::info("Employee $employeeId - Total Hours: $totalHours, Hourly Rate: $hourRate");
-
-        // Convert time to numeric hours
-        list($hours, $minutes, $seconds) = explode(":", $totalHours);
-        $totalHoursNumeric = $hours + ($minutes / 60) + ($seconds / 3600);
-
-        $calculatedSalary = $totalHoursNumeric * $hourRate;
-
-        \Log::info("Employee $employeeId - Calculated Salary: $calculatedSalary");
-
-        // Check what columns your Salary table actually has
-        // For now, just update the basic salary without month filtering
-        $salaryEmployee = Salary::where('employee_id', $employeeId)->first();
-
-        if ($salaryEmployee) {
-            $salaryEmployee->update([
-                'salary' => $calculatedSalary,
-            ]);
-            \Log::info("Updated salary for employee $employeeId to $calculatedSalary");
-        } else {
-            Salary::create([
-                'employee_id' => $employeeId,
-                'salary' => $calculatedSalary,
-            ]);
-            \Log::info("Created new salary record for employee $employeeId with salary $calculatedSalary");
-        }
-    }
     public function getTimeLogs(Request $request)
     {
         $employeeIds = $request->input('employee_ids');
@@ -465,6 +418,7 @@ class TimeSheetController extends Controller
 
         return response()->json($timeLogs);
     }
+
     public function verifyPin(Request $request)
     {
         $employee = Employee::find($request->employee_id);
