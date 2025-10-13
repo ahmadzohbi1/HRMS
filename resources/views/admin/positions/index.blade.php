@@ -49,10 +49,10 @@
                                         <a href="{{ route('positions.edit', ($data->id)) }}"
                                             class="btn btn-warning">Edit</a>
 
-                                        <form action="{{ route('positions.delete', $data->id) }}" method="POST">
+                                        <form id="delete-position-{{ $data->id }}" action="{{ route('positions.delete', $data->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button style="margin-left:5px" type="submit" class="btn btn-danger">
+                                            <button style="margin-left:5px" type="button" class="btn btn-danger" onclick="confirmDelete('Position').then(result => { if(result) document.getElementById('delete-position-{{ $data->id }}').submit(); })">
                                                 <i></i> Delete
                                             </button>
                                         </form>

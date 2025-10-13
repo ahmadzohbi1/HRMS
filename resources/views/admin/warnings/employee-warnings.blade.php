@@ -84,11 +84,11 @@
                                                     <i class="bx bx-edit"></i> Edit
                                                 </a>
                                                 <form action="{{ route('warnings.destroy', $warning->id) }}" 
-                                                      method="POST" style="display:inline;"
-                                                      onsubmit="return confirm('Are you sure you want to delete this warning?');">
+                                                      method="POST" style="display:inline;" id="delete-warning-{{ $warning->id }}">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                    <button type="button" class="btn btn-danger btn-sm"
+                                                        onclick="confirmDelete('Warning').then(result => { if(result) document.getElementById('delete-warning-{{ $warning->id }}').submit(); })">
                                                         <i class="bx bx-trash"></i> Delete
                                                     </button>
                                                 </form>

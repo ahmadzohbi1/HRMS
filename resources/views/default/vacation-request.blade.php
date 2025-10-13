@@ -6,6 +6,7 @@
     <title>Vacation Request Form</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <style>
         .form-container {
             max-width: 800px;
@@ -418,7 +419,7 @@
         document.getElementById('vacationForm').addEventListener('submit', function(e) {
             if (!isPinVerified) {
                 e.preventDefault();
-                alert('Please verify your PIN before submitting.');
+                showWarning('Please verify your PIN before submitting.', 'PIN Verification Required');
                 return;
             }
             
@@ -432,6 +433,41 @@
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('start_date').min = today;
         document.getElementById('end_date').min = today;
+    </script>
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // SweetAlert helper functions for vacation request form
+        function showError(message, title) {
+            Swal.fire({
+                title: title || 'Error!',
+                text: message,
+                icon: 'error',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#dc3545'
+            });
+        }
+
+        function showSuccess(message, title) {
+            Swal.fire({
+                title: title || 'Success!',
+                text: message,
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+
+        function showWarning(message, title) {
+            Swal.fire({
+                title: title || 'Warning!',
+                text: message,
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#ffc107'
+            });
+        }
     </script>
 </body>
 </html>

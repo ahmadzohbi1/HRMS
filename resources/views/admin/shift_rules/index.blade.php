@@ -66,11 +66,13 @@
                                             class="btn btn-warning btn-md">Edit</a>
                                         <a href="" class="btn btn-primary btn-md">View</a>
                                         <form action="{{ route('shifts-rules.destroy', $data->id) }}" method="POST"
-                                            style="display:inline;"
-                                            onsubmit="return confirm('Are you sure you want to delete this shift?');">
+                                            style="display:inline;" id="delete-shift-rule-{{ $data->id }}">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-md">Delete</button>
+                                            <button type="button" class="btn btn-danger btn-md"
+                                                onclick="confirmDelete('Shift Rule').then(result => { if(result) document.getElementById('delete-shift-rule-{{ $data->id }}').submit(); })">
+                                                Delete
+                                            </button>
                                         </form>
                                     </td>
                                 </tr>

@@ -65,10 +65,10 @@
                                         <a href="{{ route('vacation-types.edit', $type->id) }}" class="btn btn-warning btn-sm">
                                             <i class="bx bx-edit"></i> Edit
                                         </a>
-                                        <form action="{{ route('vacation-types.destroy', $type->id) }}" method="POST" style="display: inline-block;">
+                                        <form action="{{ route('vacation-types.destroy', $type->id) }}" method="POST" style="display: inline-block;" id="delete-vacation-type-{{ $type->id }}">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this vacation type?')">
+                                            <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('Vacation Type').then(result => { if(result) document.getElementById('delete-vacation-type-{{ $type->id }}').submit(); })">
                                                 <i class="bx bx-trash"></i> Delete
                                             </button>
                                         </form>

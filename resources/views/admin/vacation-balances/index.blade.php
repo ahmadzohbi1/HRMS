@@ -277,12 +277,12 @@
                                                     <i class="bx bx-edit"></i>
                                                 </a>
                                                 <form action="{{ route('vacation-balances.destroy', $balance->id) }}" 
-                                                      method="POST" style="display: inline-block;">
+                                                      method="POST" style="display: inline-block;" id="delete-balance-{{ $balance->id }}">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-outline-danger btn-sm" 
+                                                    <button type="button" class="btn btn-outline-danger btn-sm" 
                                                             data-bs-toggle="tooltip" title="Delete Balance"
-                                                            onclick="return confirm('Are you sure you want to delete this balance?')">
+                                                            onclick="confirmDelete('Vacation Balance').then(result => { if(result) document.getElementById('delete-balance-{{ $balance->id }}').submit(); })">
                                                         <i class="bx bx-trash"></i>
                                                     </button>
                                                 </form>

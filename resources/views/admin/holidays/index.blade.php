@@ -17,7 +17,69 @@
                         </div>
                     @endif
 
-                    <div class="d-flex justify-content-end mb-4">
+                    <!-- Holiday Statistics -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="card mini-stats-wid">
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <div class="flex-grow-1">
+                                            <p class="text-muted fw-medium">Total Holidays</p>
+                                            <h4 class="mb-0">{{ $holidays->count() }}</h4>
+                                        </div>
+                                        <div class="avatar-sm rounded-circle bg-primary align-self-center mini-stat-icon">
+                                            <span class="avatar-title rounded-circle bg-primary">
+                                                <i class="bx bx-calendar font-size-24"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card mini-stats-wid">
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <div class="flex-grow-1">
+                                            <p class="text-muted fw-medium">This Year</p>
+                                            <h4 class="mb-0">{{ $holidays->filter(fn($h) => $h->date->year == date('Y'))->count() }}</h4>
+                                        </div>
+                                        <div class="avatar-sm rounded-circle bg-success align-self-center mini-stat-icon">
+                                            <span class="avatar-title rounded-circle bg-success">
+                                                <i class="bx bx-time font-size-24"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card mini-stats-wid">
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <div class="flex-grow-1">
+                                            <p class="text-muted fw-medium">Upcoming</p>
+                                            <h4 class="mb-0">{{ $holidays->filter(fn($h) => $h->date >= now())->count() }}</h4>
+                                        </div>
+                                        <div class="avatar-sm rounded-circle bg-warning align-self-center mini-stat-icon">
+                                            <span class="avatar-title rounded-circle bg-warning">
+                                                <i class="bx bx-bell font-size-24"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <a href="/holiday/calender" class="btn btn-info me-2">
+                                <i class="bx bx-calendar-alt me-1"></i>
+                                View Calendar
+                            </a>
+                        </div>
+                        <div>
                         <a href="{{ route('holidays.create') }}"
                             class="btn btn-rounded btn-success waves-effect waves-light">
                             <i class="bx bx-plus font-size-16 me-2 align-middle"></i>
@@ -30,29 +92,51 @@
                             <tr>
                                 <th>#</th>
                                 <th>Holiday Name</th>
-                                <th>Date</th>
-                                <th>Day</th>
+                                <th>Holiday Date</th>
+                                <th>Day of Week</th>
+                                <th>Year</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($holidays as $holiday)
                                 <tr>
-                                    <td>{{ $holiday->id }}</td>
-                                    <td>{{ $holiday->name }}</td>
-                                    <td>{{ $holiday->date->format('Y-m-d') }}</td>
-                                    <td>{{ $holiday->date->format('l') }}</td>
+                                    <td>{{ $loop->iteration }}</td>
                                     <td>
-                                        <a href="{{ route('holidays.edit', $holiday->id) }}" class="btn btn-warning btn-sm">
-                                            <i class="bx bx-edit"></i> Edit
+                                        <i class="bx bx-calendar text-danger me-1"></i>
+                                        <strong>{{ $holiday->name }}</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary">
+                                            {{ $holiday->date->format('F j, Y') }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">
+                                            {{ $holiday->date->format('l') }}
+                                        </span>
+                                    </td>
+                                    <td>{{ $holiday->date->format('Y') }}</td>
+                                    <td>
+                                        <a href="{{ route('holidays.show', $holiday->id) }}" 
+                                           class="btn btn-primary btn-sm"
+                                           title="View Details">
+                                            <i class="bx bx-show"></i>
+                                        </a>
+                                        <a href="{{ route('holidays.edit', $holiday->id) }}" 
+                                           class="btn btn-warning btn-sm"
+                                           title="Edit">
+                                            <i class="bx bx-edit"></i>
                                         </a>
                                         <form action="{{ route('holidays.destroy', $holiday->id) }}" method="POST"
-                                            style="display: inline-block;">
+                                            style="display: inline-block;" id="delete-holiday-{{ $holiday->id }}">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm"
-                                                onclick="return confirm('Are you sure you want to delete this holiday?')">
-                                                <i class="bx bx-trash"></i> Delete
+                                            <button type="button" 
+                                                    class="btn btn-danger btn-sm"
+                                                    title="Delete"
+                                                    onclick="confirmDelete('Holiday').then(result => { if(result) document.getElementById('delete-holiday-{{ $holiday->id }}').submit(); })">
+                                                <i class="bx bx-trash"></i>
                                             </button>
                                         </form>
                                     </td>

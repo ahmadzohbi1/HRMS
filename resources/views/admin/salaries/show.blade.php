@@ -173,11 +173,11 @@
                                                         <i class="fas fa-edit"></i>
                                                     </a>
                                                     <form action="{{ route('salaries.advances.destroy', [$salary, $advance]) }}" 
-                                                          method="POST" class="d-inline">
+                                                          method="POST" class="d-inline" id="delete-advance-{{ $advance->id }}">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                                onclick="return confirm('Are you sure?')">
+                                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                                                onclick="confirmDelete('Advance').then(result => { if(result) document.getElementById('delete-advance-{{ $advance->id }}').submit(); })">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </form>
@@ -250,11 +250,11 @@
                                                         <i class="fas fa-edit"></i>
                                                     </a>
                                                     <form action="{{ route('salaries.bonuses.destroy', [$salary, $bonus]) }}" 
-                                                          method="POST" class="d-inline">
+                                                          method="POST" class="d-inline" id="delete-bonus-{{ $bonus->id }}">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                                onclick="return confirm('Are you sure?')">
+                                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                                                onclick="confirmDelete('Bonus').then(result => { if(result) document.getElementById('delete-bonus-{{ $bonus->id }}').submit(); })">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </form>

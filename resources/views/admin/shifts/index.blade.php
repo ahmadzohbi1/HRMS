@@ -68,11 +68,13 @@
 
                                         <!-- Delete Button with Confirmation -->
                                         <form action="{{ route('shifts.destroy', $shift->id) }}" method="POST"
-                                            style="display:inline;"
-                                            onsubmit="return confirm('Are you sure you want to delete this shift?');">
+                                            style="display:inline;" id="delete-shift-{{ $shift->id }}">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-md">Delete</button>
+                                            <button type="button" class="btn btn-danger btn-md"
+                                                onclick="confirmDelete('Shift').then(result => { if(result) document.getElementById('delete-shift-{{ $shift->id }}').submit(); })">
+                                                Delete
+                                            </button>
                                         </form>
                                     </td>
                                 </tr>

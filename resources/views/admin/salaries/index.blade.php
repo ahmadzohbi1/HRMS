@@ -178,12 +178,12 @@
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                                 <form action="{{ route('salaries.destroy', $salary) }}" 
-                                                      method="POST" class="d-inline">
+                                                      method="POST" class="d-inline" id="delete-salary-{{ $salary->id }}">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                    <button type="button" class="btn btn-sm btn-outline-danger" 
                                                             title="Delete"
-                                                            onclick="return confirm('Are you sure you want to delete this salary record?')">
+                                                            onclick="confirmDelete('Salary Record').then(result => { if(result) document.getElementById('delete-salary-{{ $salary->id }}').submit(); })">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 </form>

@@ -74,11 +74,11 @@
                                             <i class="bx bx-edit"></i> Edit
                                         </a>
                                         <form action="{{ route('vacations.destroy', $vacation->id) }}" method="POST"
-                                            style="display: inline-block;">
+                                            style="display: inline-block;" id="delete-vacation-{{ $vacation->id }}">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm"
-                                                onclick="return confirm('Are you sure you want to delete this vacation request?')">
+                                            <button type="button" class="btn btn-danger btn-sm"
+                                                onclick="confirmDelete('Vacation Request').then(result => { if(result) document.getElementById('delete-vacation-{{ $vacation->id }}').submit(); })">
                                                 <i class="bx bx-trash"></i> Delete
                                             </button>
                                         </form>

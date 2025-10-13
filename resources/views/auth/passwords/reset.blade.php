@@ -46,7 +46,7 @@
 
                                                                 <div>
                                                                     <h4 class="font-size-16 text-primary">Abs1981</h4>
-                                                                    <p class="font-size-14 mb-0">- Alzohbi User</p>
+                                                                    <p class="font-size-14 mb-0">- Genesis-lb User</p>
                                                                 </div>
                                                             </div>
 
@@ -61,7 +61,7 @@
 
                                                                 <div>
                                                                     <h4 class="font-size-16 text-primary">nezerious</h4>
-                                                                    <p class="font-size-14 mb-0">- Alzohbi User</p>
+                                                                    <p class="font-size-14 mb-0">- Genesis-lb User</p>
                                                                 </div>
                                                             </div>
 
@@ -93,7 +93,7 @@
 
                                     <div>
                                         <h5 class="text-primary"> Reset Password</h5>
-                                        <p class="text-muted">Re-Password with Alzohbi.</p>
+                                        <p class="text-muted">Re-Password with Genesis-lb.</p>
                                     </div>
 
                                     <div class="mt-4">

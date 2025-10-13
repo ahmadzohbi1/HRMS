@@ -230,15 +230,15 @@
 
         <div class="contact-info">
             <h4>Questions or Need Help?</h4>
-            <p>Contact HR at <strong>hr@alzohbi.com</strong> or visit the HR office.</p>
+            <p>Contact HR at <strong>hr@Genesis-lb.com</strong> or visit the HR office.</p>
             <p>We're here to help with any questions about your vacation request.</p>
         </div>
 
         <div class="footer">
             <p><strong>Important:</strong> This is an automated notification. Please do not reply to this message.</p>
-            <p>For questions, contact HR at hr@alzohbi.com</p>
+            <p>For questions, contact HR at hr@Genesis-lb.com</p>
             <hr>
-            <p>&copy; {{ date('Y') }} Alzohbi. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} Genesis-lb. All rights reserved.</p>
         </div>
     </div>
 </body>

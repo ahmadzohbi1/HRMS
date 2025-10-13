@@ -232,8 +232,18 @@ class HolidayCalendar {
     }
     
     showAlert(title, message) {
-        // Simple alert - can be replaced with modal
-        alert(`${title}\n${message}`);
+        // SweetAlert2 instead of simple alert
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: title,
+                text: message,
+                icon: 'info',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#667eea'
+            });
+        } else {
+            alert(`${title}\n${message}`);
+        }
     }
     
     truncateText(text, maxLength) {
@@ -301,6 +311,89 @@ function changeMonth(direction) {
 function goToToday() {
     if (holidayCalendar) {
         holidayCalendar.goToToday();
+    }
+}
+
+function showHolidayMonthSelector() {
+    if (!holidayCalendar) return;
+    
+    // Get all unique months with holidays
+    const holidayMonths = {};
+    holidayCalendar.holidays.forEach(holiday => {
+        const date = new Date(holiday.date);
+        const monthKey = `${date.getFullYear()}-${date.getMonth()}`;
+        const monthName = `${holidayCalendar.monthNames[date.getMonth()]} ${date.getFullYear()}`;
+        
+        if (!holidayMonths[monthKey]) {
+            holidayMonths[monthKey] = {
+                month: date.getMonth(),
+                year: date.getFullYear(),
+                name: monthName,
+                holidays: []
+            };
+        }
+        holidayMonths[monthKey].holidays.push(holiday.name);
+    });
+    
+    // Sort by date
+    const sortedMonths = Object.values(holidayMonths).sort((a, b) => {
+        return (a.year * 12 + a.month) - (b.year * 12 + b.month);
+    });
+    
+    // Build modal content
+    const modalBody = document.getElementById('holidayMonthList');
+    
+    if (sortedMonths.length === 0) {
+        modalBody.innerHTML = `
+            <div class="text-center p-4">
+                <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                <p class="text-muted">No holidays found in the calendar.</p>
+                <a href="/dashboard/holidays/create" class="btn btn-primary mt-2">
+                    <i class="fas fa-plus me-1"></i>
+                    Add Holiday
+                </a>
+            </div>
+        `;
+    } else {
+        let html = '<div class="list-group">';
+        sortedMonths.forEach(month => {
+            html += `
+                <button type="button" 
+                        class="list-group-item list-group-item-action" 
+                        onclick="jumpToMonth(${month.month}, ${month.year})">
+                    <div class="d-flex w-100 justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">
+                                <i class="fas fa-calendar-alt me-2 text-primary"></i>
+                                ${month.name}
+                            </h6>
+                            <small class="text-muted">
+                                ${month.holidays.length} holiday${month.holidays.length > 1 ? 's' : ''}: 
+                                ${month.holidays.join(', ')}
+                            </small>
+                        </div>
+                        <i class="fas fa-chevron-right text-muted"></i>
+                    </div>
+                </button>
+            `;
+        });
+        html += '</div>';
+        modalBody.innerHTML = html;
+    }
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('holidayMonthModal'));
+    modal.show();
+}
+
+function jumpToMonth(month, year) {
+    if (holidayCalendar) {
+        holidayCalendar.goToMonth(month, year);
+        // Close modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('holidayMonthModal'));
+        if (modal) {
+            modal.hide();
+        }
     }
 }
 

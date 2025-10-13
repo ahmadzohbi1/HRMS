@@ -12,8 +12,8 @@ return [
     | any other location as required by the application or its packages.
     |
     */
-    'name' => env('APP_NAME', 'Alzohbi'),
-    'company_name' => env('COMPANY_NAME', 'Alzohbi'),
+    'name' => env('APP_NAME', 'Genesis-lb'),
+    'company_name' => env('COMPANY_NAME', 'Genesis-lb'),
 
     /*
     |--------------------------------------------------------------------------

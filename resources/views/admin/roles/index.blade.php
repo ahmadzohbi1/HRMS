@@ -58,10 +58,10 @@ Roles List
         <a href="{{ route('roles.edit', $role->id) }}" class="btn btn-sm btn-primary">
         Edit
         </a>
-        <form action="{{ route('roles.destroy', $role->id) }}" method="POST" style="display:inline;">
+        <form id="delete-role-{{ $role->id }}" action="{{ route('roles.destroy', $role->id) }}" method="POST" style="display:inline;">
         @csrf
         @method('DELETE')
-        <button type="submit" class="btn btn-sm btn-danger">
+        <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('Role').then(result => { if(result) document.getElementById('delete-role-{{ $role->id }}').submit(); })">
           Delete
         </button>
         </form>

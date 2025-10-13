@@ -3,11 +3,11 @@
 
     Welcome aboard!
 
-    We're excited to have you join Alzohbi.
+    We're excited to have you join Genesis-lb.
 
-    Introducing Alzohbi – the future of mobile connectivity.
+    Introducing Genesis-lb – the future of mobile connectivity.
 
-    Why Choose Alzohbi?
+    Why Choose Genesis-lb?
         > Instant activation, no physical SIM required.
         > Global coverage in 140+ countries.
         > The most competitive eSIM rates in the market.

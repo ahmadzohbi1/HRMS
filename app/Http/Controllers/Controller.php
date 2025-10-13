@@ -10,7 +10,7 @@ use Log;
 
 /**
  * @OA\Info(
- *     title="Alzohbi API",
+ *     title="Genesis-lb API",
  *     version="0.1"
  * ),
  */

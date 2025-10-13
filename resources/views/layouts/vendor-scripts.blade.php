@@ -118,6 +118,102 @@
         })
     }
 
+    // Universal confirm dialog with SweetAlert
+    const confirmAction = (title, text, confirmButtonText, onConfirm) => {
+        Swal.fire({
+            title: title || 'Are you sure?',
+            text: text || 'This action cannot be undone',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: confirmButtonText || 'Yes, proceed!',
+            cancelButtonText: 'Cancel',
+            customClass: {
+                confirmButton: 'btn btn-primary mt-2',
+                cancelButton: 'btn btn-secondary ms-2 mt-2'
+            },
+            buttonsStyling: false
+        }).then((result) => {
+            if (result.isConfirmed && onConfirm) {
+                onConfirm();
+            }
+        });
+        return false; // Prevent default form submission
+    }
+
+    // Delete confirmation with SweetAlert
+    const confirmDelete = (itemName) => {
+        return new Promise((resolve) => {
+            Swal.fire({
+                title: 'Delete ' + (itemName || 'Item') + '?',
+                text: 'This action cannot be undone!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    confirmButton: 'btn btn-danger mt-2',
+                    cancelButton: 'btn btn-secondary ms-2 mt-2'
+                },
+                buttonsStyling: false
+            }).then((result) => {
+                resolve(result.isConfirmed);
+            });
+        });
+    }
+
+    // Success message
+    const showSuccess = (message, title) => {
+        Swal.fire({
+            title: title || 'Success!',
+            text: message,
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+        });
+    }
+
+    // Error message
+    const showError = (message, title) => {
+        Swal.fire({
+            title: title || 'Error!',
+            text: message,
+            icon: 'error',
+            confirmButtonText: 'OK',
+            customClass: {
+                confirmButton: 'btn btn-primary mt-2'
+            },
+            buttonsStyling: false
+        });
+    }
+
+    // Info message  
+    const showInfo = (message, title) => {
+        Swal.fire({
+            title: title || 'Information',
+            text: message,
+            icon: 'info',
+            confirmButtonText: 'OK',
+            customClass: {
+                confirmButton: 'btn btn-primary mt-2'
+            },
+            buttonsStyling: false
+        });
+    }
+
+    // Warning message
+    const showWarning = (message, title) => {
+        Swal.fire({
+            title: title || 'Warning!',
+            text: message,
+            icon: 'warning',
+            confirmButtonText: 'OK',
+            customClass: {
+                confirmButton: 'btn btn-warning mt-2'
+            },
+            buttonsStyling: false
+        });
+    }
+
     $('.select-all').click(function () {
         let $select2 = $(this).parent().find('.select2');
         $select2.find('option').prop('selected', 'selected');
