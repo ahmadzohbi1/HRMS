@@ -6,11 +6,6 @@
 
 @section('css')
     <link href="{{ URL::asset('/assets/libs/datatables/datatables.min.css') }}" rel="stylesheet" type="text/css"/>
-    <style>
-        table tbody tr td:nth-child(4) {
-            white-space: pre-line !important;
-        }
-    </style>
 @endsection
 
 @section('content')

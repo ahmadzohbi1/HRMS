@@ -63,34 +63,6 @@
     </div>
 @endsection
 
-@section('css')
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-    <style>
-        .card-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
-
-        .badge {
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .card-body p {
-            font-size: 1rem;
-            color: #6c757d;
-        }
-
-        .btn-outline-secondary {
-            border-radius: 30px;
-        }
-
-        .shadow-lg {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-    </style>
-@endsection
-
 @section('script')
     <script>
         // Optional JS for any future dynamic behavior if needed

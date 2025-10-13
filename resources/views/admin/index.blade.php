@@ -90,7 +90,7 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title mb-4">Monthly Salary Payments (Last 12 Months)</h4>
-                    <div style="position: relative; height: 400px;">
+                    <div class="chart-container">
                         <canvas id="salaryChart"></canvas>
                     </div>
                 </div>
@@ -102,7 +102,7 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title mb-4">Employee Gender Distribution</h4>
-                    <div style="position: relative; height: 400px;">
+                    <div class="chart-container">
                         <canvas id="genderChart"></canvas>
                     </div>
                 </div>

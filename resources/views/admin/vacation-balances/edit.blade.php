@@ -3,51 +3,6 @@
 
 @section('title') Edit Vacation Balance @endsection
 
-@section('css')
-    <style>
-        .balance-comparison {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 15px;
-        }
-        .balance-card {
-            border: 2px solid #e3f2fd;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-        }
-        .balance-card:hover {
-            border-color: #2196f3;
-            box-shadow: 0 4px 20px rgba(33, 150, 243, 0.1);
-        }
-        .form-control:focus, .form-select:focus {
-            border-color: #2196f3;
-            box-shadow: 0 0 0 0.2rem rgba(33, 150, 243, 0.25);
-        }
-        .info-badge {
-            background: rgba(33, 150, 243, 0.1);
-            color: #1976d2;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-        .change-indicator {
-            font-size: 2rem;
-            font-weight: bold;
-        }
-        .employee-avatar {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(45deg, #ff6b6b, #feca57);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 18px;
-        }
-    </style>
 @endsection
 
 @section('content')

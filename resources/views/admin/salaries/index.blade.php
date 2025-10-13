@@ -27,7 +27,7 @@
                                 
                                 <form method="GET" action="{{ route('salaries.index') }}" class="d-flex align-items-center">
                                     <input type="month" name="month" value="{{ $selectedMonth }}" 
-                                           class="form-control form-control-sm me-2" style="width: auto;"
+                                           class="form-control form-control-sm me-2 w-auto"
                                            onchange="this.form.submit()">
                                     <button type="submit" class="btn btn-outline-primary btn-sm me-2">Go</button>
                                 </form>
@@ -127,7 +127,7 @@
                                                          
                                                 @else
                                                     <div class="bg-primary rounded-circle me-2 d-flex align-items-center justify-content-center" 
-                                                         style="width: 32px; height: 32px;">
+                                                         class="avatar-sm">
                                                         <span class="text-white fw-bold">
                                                             {{ substr($salary->employee->name, 0, 1) }}
                                                         </span>
@@ -145,7 +145,7 @@
                                             </span>
                                             @if($salary->version > 1)
                                                 <small class="d-block">
-                                                    <span class="badge bg-info" style="font-size: 0.7em;">
+                                                    <span class="badge bg-info version-badge">
                                                         Version {{ $salary->version }}
                                                     </span>
                                                 </small>
@@ -288,22 +288,3 @@
     </div>
 </div>
 @endsection
-
-@push('styles')
-<style>
-    .table th {
-        border-top: none;
-        font-weight: 600;
-    }
-    .btn-group .btn {
-        border-radius: 0.25rem !important;
-        margin-right: 2px;
-    }
-    .month-navigation {
-        background: #f8f9fa;
-        border-radius: 0.5rem;
-        padding: 1rem;
-        margin-bottom: 1rem;
-    }
-</style>
-@endpush

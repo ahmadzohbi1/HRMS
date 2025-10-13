@@ -34,13 +34,13 @@ admins
                                 <table class="table-borderle mb-0 table">
                                     <tbody>
                                         <tr>
-                                            <th scope="row" style="width: 150px;">Name:</th>
+                                            <th scope="row" class="th-w-150">Name:</th>
                                             <td>{{ $user->name }}</td>
-                                            <th scope="row" style="width: 150px;">Email:</th>
+                                            <th scope="row" class="th-w-150">Email:</th>
                                             <td>{{ $user->email }}</td>
                                         </tr>
                                         <tr>
-                                            <th scope="row" style="width: 150px;">Role:</th>
+                                            <th scope="row" class="th-w-150">Role:</th>
                                             <td>{{ $user->roles->pluck('name')->join(', ') ?? 'N/A' }}</td>
                                         </tr>
                                     </tbody>

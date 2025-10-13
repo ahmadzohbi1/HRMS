@@ -53,7 +53,7 @@
                                             class="btn btn-warning btn-md">Edit</a>
                                         
                                         <form action="{{ route('departments.destroy', $data->id) }}" method="POST"
-                                            style="display:inline;" id="delete-department-{{ $data->id }}">
+                                            class="d-inline" id="delete-department-{{ $data->id }}">
                                             @csrf
                                             @method('DELETE')
                                             <button type="button" class="btn btn-danger btn-md"

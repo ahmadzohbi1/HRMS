@@ -15,51 +15,6 @@
 
         <!-- Link to the external CSS file -->
         <link href="{{ asset('assets/css/timesheet.css') }}" rel="stylesheet" />
-        
-        <!-- Add custom styles for indicators -->
-        <style>
-            .day-box {
-                position: relative;
-            }
-            .holiday-indicator {
-                position: absolute;
-                top: 5px;
-                right: 5px;
-                width: 12px;
-                height: 12px;
-                background-color: #007bff;
-                border-radius: 50%;
-                z-index: 10;
-            }
-            .vacation-indicator {
-                position: absolute;
-                top: 5px;
-                right: 5px;
-                width: 12px;
-                height: 12px;
-                background-color: #28a745;
-                border-radius: 50%;
-                z-index: 10;
-            }
-            .legend {
-                display: flex;
-                gap: 20px;
-                margin-bottom: 20px;
-                padding: 10px;
-                background-color: #f8f9fa;
-                border-radius: 5px;
-            }
-            .legend-item {
-                display: flex;
-                align-items: center;
-                gap: 5px;
-            }
-            .legend-dot {
-                width: 12px;
-                height: 12px;
-                border-radius: 50%;
-            }
-        </style>
 
         <!-- Year and Month Filter -->
         <div class="filter-container mb-3">

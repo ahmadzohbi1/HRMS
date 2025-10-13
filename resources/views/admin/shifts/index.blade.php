@@ -29,7 +29,7 @@
 
                     <div class="d-flex justify-content-end mb-4" id="action_btns">
                         <a href="{{ route('shifts.create') }}" class="btn btn-rounded btn-success waves-effect waves-light"
-                            style="margin-right: 10px;">
+                            class="me-10">
                             <i class="bx bx-plus font-size-16 me-2 align-middle"></i> Add Shift
                         </a>
                     </div>

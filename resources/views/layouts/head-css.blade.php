@@ -5,7 +5,11 @@
 <link href="{{ asset('/assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
 {{-- select2 --}}
 <link href="{{ asset('/assets/libs/select2/select2.min.css') }}" rel="stylesheet" type="text/css" />
-{{-- cutsom css --}}
+{{-- Admin Utilities --}}
+<link href="{{ asset('/assets/css/admin/utilities.css') }}" rel="stylesheet" type="text/css" />
+{{-- Admin Global Styles --}}
+<link href="{{ asset('/assets/css/admin/admin-global.css') }}" rel="stylesheet" type="text/css" />
+{{-- custom css --}}
 <link href="{{ asset('/assets/css/custom.css') }}" rel="stylesheet" type="text/css" />
 
 @if (App::getLocale() == 'ar' || App::getLocale() == 'ku')

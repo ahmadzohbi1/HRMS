@@ -5,67 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monthly Salary Report - {{ $salary->employee->name }} - {{ $currentDate->format('F Y') }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        @media print {
-            .no-print { display: none; }
-            body { padding: 0; }
-        }
-        
-        body {
-            background: #f5f5f5;
-            padding: 20px;
-        }
-        
-        .report-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        
-        .company-header {
-            text-align: center;
-            border-bottom: 3px solid #667eea;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .company-header h1 {
-            color: #667eea;
-            margin: 0;
-        }
-        
-        .report-title {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 30px;
-        }
-        
-        .employee-info {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        
-        .summary-table {
-            margin: 20px 0;
-        }
-        
-        .total-row {
-            background: #667eea !important;
-            color: white;
-            font-weight: bold;
-            font-size: 1.2em;
-        }
-        
-        .timelogs-table td, .timelogs-table th {
-            font-size: 0.9em;
-        }
-    </style>
+    <link href="{{ asset('assets/css/admin/salary-reports.css') }}" rel="stylesheet">
 </head>
 <body>
     <div class="report-container">

@@ -1,0 +1,184 @@
+/* Employee Time Tracking Styles */
+
+.time-tracking-page body {
+    background-color: #c6f1f3;
+}
+
+.time-tracking-page .container {
+    margin-top: 50px;
+}
+
+.time-tracking-page .card-body {
+    justify-content: space-between;
+    display: flex;
+    flex: 1 1 auto;
+    padding: 1rem 0rem;
+}
+
+.time-tracking-page .card-title {
+    font-size: 17px;
+    margin-left: 10px;
+    margin-top: 13px;
+    margin-bottom: .5rem;
+}
+
+.time-tracking-page .card {
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+    background: linear-gradient(135deg, #66caea, #4ba25a);
+    color: white;
+}
+
+.time-tracking-page .card:hover {
+    transform: scale(1.05);
+}
+
+.btn-toggle {
+    width: 100px;
+    font-size: 1.1rem;
+    transition: background 0.3s ease-in-out;
+}
+
+.btn-toggle.start {
+    padding-left: 12px;
+    height: 50px;
+    width: 50px;
+    border-radius: 30px;
+    background: white;
+    color: green;
+}
+
+.btn-toggle.stop {
+    padding-left: 12px;
+    height: 50px;
+    width: 50px;
+    border-radius: 30px;
+    background: white;
+    color: red;
+}
+
+.btn-toggle:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.profile-img-div {
+    display: flex;
+}
+
+.profile-img {
+    border-radius: 40px;
+    width: 50px;
+    height: 55px;
+}
+
+.play-btns {
+    width: 200px;
+    margin: 60px 0px 0px 31px;
+    position: absolute;
+    justify-content: space-evenly;
+    display: flex;
+}
+
+.cust-container {
+    margin: 10px;
+}
+
+/* PIN Modal Styles */
+.pin-modal-content {
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: none;
+}
+
+.pin-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.pin-input {
+    width: 60px;
+    height: 60px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.pin-input:focus {
+    border-color: #4ba25a;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(75, 162, 90, 0.1);
+    transform: scale(1.05);
+}
+
+.pin-input.error {
+    border-color: #dc3545;
+    background: #ffe6e6;
+    animation: shake 0.5s;
+}
+
+.pin-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.pin-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #e0e0e0;
+    transition: all 0.3s ease;
+}
+
+.pin-dot.filled {
+    background: #4ba25a;
+    transform: scale(1.2);
+}
+
+.pin-dots.error .pin-dot {
+    background: #dc3545;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.time-tracking-page .modal-header .modal-title {
+    color: #333;
+    font-weight: 600;
+    font-size: 1.3rem;
+}
+
+.time-tracking-page .btn-close {
+    filter: none;
+    opacity: 0.7;
+}
+
+.time-tracking-page .btn-close:hover {
+    opacity: 1;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 576px) {
+    .pin-input {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+    
+    .pin-container {
+        gap: 10px;
+    }
+}
+

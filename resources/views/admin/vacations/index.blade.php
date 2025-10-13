@@ -74,7 +74,7 @@
                                             <i class="bx bx-edit"></i> Edit
                                         </a>
                                         <form action="{{ route('vacations.destroy', $vacation->id) }}" method="POST"
-                                            style="display: inline-block;" id="delete-vacation-{{ $vacation->id }}">
+                                            class="d-inline-block" id="delete-vacation-{{ $vacation->id }}">
                                             @csrf
                                             @method('DELETE')
                                             <button type="button" class="btn btn-danger btn-sm"

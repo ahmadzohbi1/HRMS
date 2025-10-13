@@ -34,25 +34,25 @@
                     </div>
                     <table id="datatable" class="table-hover table-bordered nowrap w-100 table">
                         <thead class="table-light">
-                            <tr style="border-color: #cad3dc !important;">
+                            <tr>
                                 <th>#</th>
                                 <th>Positon Name</th>
                                 <th>Created At</th>
                                 <th>Actions</th>
                             </tr>
                             @foreach ($postions_data as $data)
-                                <tr style="border-color: #cad3dc !important;">
+                                <tr>
                                     <td>{{$data->id}}</td>
                                     <td>{{$data->name}}</td>
                                     <td>{{$data->created_at}}</td>
-                                    <td style="display: flex;">
+                                    <td class="d-flex">
                                         <a href="{{ route('positions.edit', ($data->id)) }}"
                                             class="btn btn-warning">Edit</a>
 
                                         <form id="delete-position-{{ $data->id }}" action="{{ route('positions.delete', $data->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button style="margin-left:5px" type="button" class="btn btn-danger" onclick="confirmDelete('Position').then(result => { if(result) document.getElementById('delete-position-{{ $data->id }}').submit(); })">
+                                            <button type="button" class="btn btn-danger ms-1" onclick="confirmDelete('Position').then(result => { if(result) document.getElementById('delete-position-{{ $data->id }}').submit(); })">
                                                 <i></i> Delete
                                             </button>
                                         </form>

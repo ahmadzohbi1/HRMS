@@ -46,7 +46,7 @@
                                 <button type="button" id="select-all" class="btn btn-l  btn-primary waves-effect waves-light me-1">Select All</button>
                                 <button type="button" id="deselect-all" class="btn btn-l btn-warning waves-effect waves-light me-1">Deselect All</button>
                                 
-                                <div class="row" style="margin-top:20px">
+                                <div class="row mt-20">
                                     
                                     <!-- Permission Categories -->
                                     @php

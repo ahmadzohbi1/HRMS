@@ -129,7 +129,7 @@
                                             <i class="bx bx-edit"></i>
                                         </a>
                                         <form action="{{ route('holidays.destroy', $holiday->id) }}" method="POST"
-                                            style="display: inline-block;" id="delete-holiday-{{ $holiday->id }}">
+                                            class="d-inline-block" id="delete-holiday-{{ $holiday->id }}">
                                             @csrf
                                             @method('DELETE')
                                             <button type="button" 
