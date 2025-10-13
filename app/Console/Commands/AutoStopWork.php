@@ -100,7 +100,7 @@ class AutoStopWork extends Command
             Log::error("Auto-stop command failed: " . $e->getMessage());
             
             // In production, you might want to send alerts here
-            // Mail::to('admin@company.com')->send(new AutoStopFailedMail($e));
+            
             
             return 1; // Exit with error code
         }
