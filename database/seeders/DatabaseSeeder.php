@@ -18,7 +18,8 @@ class DatabaseSeeder extends Seeder
             RolesAndPermissionsSeeder::class,
             PermissionsSeeder::class,
             RoleSeeder::class,
-            PositionSeeder::class
+            PositionSeeder::class,
+            VacationTypeSeeder::class,
         ]);
     }
 }

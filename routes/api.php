@@ -3,6 +3,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\v1\NotificationController;
+use App\Http\Controllers\Api\VacationActionController;
 
 Route::group(["prefix" => 'v1'], function () {
 
@@ -31,4 +32,7 @@ Route::group(["prefix" => 'v1'], function () {
     });
 
 });
+
+// Vacation action route - secure one-time approve/reject from email
+Route::get('/vacation-action/{token}', [VacationActionController::class, 'handleAction'])->name('vacation.action');
 

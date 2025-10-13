@@ -98,6 +98,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Admin Email Address
+    |--------------------------------------------------------------------------
+    |
+    | This email address will receive notifications for vacation requests
+    | and other administrative notifications.
+    |
+    */
+
+    'admin_email' => env('ADMIN_EMAIL', 'admin@example.com'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Markdown Mail Settings
     |--------------------------------------------------------------------------
     |

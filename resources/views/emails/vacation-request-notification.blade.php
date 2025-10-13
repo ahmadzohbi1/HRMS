@@ -54,24 +54,40 @@
         .action-buttons {
             text-align: center;
             margin: 30px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
         }
         .btn {
             display: inline-block;
-            padding: 12px 24px;
-            margin: 0 10px;
+            padding: 15px 30px;
+            margin: 10px 5px;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-weight: bold;
             color: white;
+            font-size: 16px;
         }
         .btn-approve {
             background-color: #28a745;
         }
+        .btn-approve:hover {
+            background-color: #218838;
+        }
         .btn-reject {
             background-color: #dc3545;
         }
+        .btn-reject:hover {
+            background-color: #c82333;
+        }
         .btn-view {
             background-color: #007bff;
+            display: block;
+            margin: 20px auto;
+            max-width: 250px;
+        }
+        .btn-view:hover {
+            background-color: #0056b3;
         }
         .footer {
             margin-top: 30px;
@@ -79,6 +95,7 @@
             border-top: 1px solid #eee;
             text-align: center;
             color: #666;
+            font-size: 12px;
         }
         .employee-details {
             background-color: #fff3cd;
@@ -86,6 +103,15 @@
             border-radius: 8px;
             margin: 20px 0;
             border-left: 4px solid #ffc107;
+        }
+        .quick-action-note {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
         }
     </style>
 </head>
@@ -156,15 +182,29 @@
             <span>{{ $vacation->created_at->format('F j, Y \a\t g:i A') }}</span>
         </div>
 
+        <div class="quick-action-note">
+            <strong>⚡ Quick Actions Available!</strong><br>
+            You can approve or reject this request directly from this email with one click.
+        </div>
+
         <div class="action-buttons">
-            <a href="{{ url('/admin/vacations/' . $vacation->id . '/approve') }}" class="btn btn-approve">
+            <h3 style="margin-top: 0;">Take Action:</h3>
+            <a href="{{ $approveUrl }}" class="btn btn-approve">
                 ✅ Approve Request
             </a>
-            <a href="{{ url('/admin/vacations/' . $vacation->id) }}" class="btn btn-view">
-                👁️ View Details
-            </a>
-            <a href="{{ url('/admin/vacations/' . $vacation->id . '/reject') }}" class="btn btn-reject">
+            <a href="{{ $rejectUrl }}" class="btn btn-reject">
                 ❌ Reject Request
+            </a>
+            
+            <p style="margin: 20px 0; font-size: 14px; color: #666;">
+                <strong>Note:</strong> These links are one-time use and will expire in 7 days.
+            </p>
+        </div>
+
+        <div style="text-align: center; margin: 20px 0;">
+            <p><strong>OR</strong></p>
+            <a href="{{ $viewUrl }}" class="btn btn-view">
+                👁️ View in Admin Dashboard
             </a>
         </div>
 
@@ -181,8 +221,9 @@
         <div class="footer">
             <p><strong>This request is currently: PENDING</strong></p>
             <p>Please review and take action as soon as possible.</p>
-            <hr>
-            <p>HR Management System - {{ date('Y') }}</p>
+            <hr style="margin: 15px 0;">
+            <p>This is an automated email from the HR Management System.</p>
+            <p>&copy; {{ date('Y') }} HRMS. All rights reserved.</p>
         </div>
     </div>
 </body>

@@ -44,21 +44,35 @@ class VacationRequestController extends Controller
             'reason' => 'nullable|string|max:1000',
         ]);
 
-        // Verify PIN (additional security check)
+        // Get employee from database
         $employee = Employee::find($validated['employee_id']);
         if (!$employee) {
             return redirect()->back()->withErrors(['employee_id' => 'Employee not found.']);
         }
 
-        // Create the vacation request
+        // Check if employee already submitted a request today (limit: 1 request per day)
+        $todayRequestCount = Vacation::where('employee_id', $validated['employee_id'])
+            ->whereDate('created_at', Carbon::today())
+            ->count();
+
+        if ($todayRequestCount >= 1) {
+            return redirect()->back()
+                ->withErrors(['employee_id' => 'This employee has already submitted a vacation request today. Only 1 request per day is allowed.'])
+                ->withInput();
+        }
+
+        // Use employee's email from database, fallback to applicant_email if not available
+        $employeeEmail = $employee->email ?? $validated['applicant_email'];
+
+        // Create the vacation request with status 'pending'
         $vacation = Vacation::create([
             'employee_id' => $validated['employee_id'],
             'vacation_type_id' => $validated['vacation_type_id'],
             'start_date' => $validated['start_date'],
             'end_date' => $validated['end_date'],
-            'status' => 'pending',
+            'status' => 'pending', // Always starts as pending
             'applicant_name' => $validated['applicant_name'],
-            'applicant_email' => $validated['applicant_email'],
+            'applicant_email' => $employeeEmail, // Use employee email from database
             'applicant_phone' => $validated['applicant_phone'],
             'reason' => $validated['reason'],
         ]);
@@ -66,20 +80,22 @@ class VacationRequestController extends Controller
         // Load relationships for email
         $vacation->load(['employee', 'vacationType']);
 
-        // Send email to employee
+        // Send confirmation email to employee
         try {
-            Mail::to($validated['applicant_email'])
+            Mail::to($employeeEmail)
                 ->send(new VacationRequestSubmitted($vacation));
+            \Log::info("Confirmation email sent to employee: {$employeeEmail}");
         } catch (\Exception $e) {
             // Log the error but don't fail the request
             \Log::error('Failed to send employee email: ' . $e->getMessage());
         }
 
-        // Send email to admin (you can configure admin email in config/mail.php)
+        // Send notification email to admin with action buttons
         try {
             $adminEmail = config('mail.admin_email', 'admin@yourcompany.com');
             Mail::to($adminEmail)
                 ->send(new VacationRequestNotification($vacation));
+            \Log::info("Admin notification sent to: {$adminEmail}");
         } catch (\Exception $e) {
             // Log the error but don't fail the request
             \Log::error('Failed to send admin email: ' . $e->getMessage());

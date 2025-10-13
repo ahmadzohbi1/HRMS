@@ -108,10 +108,12 @@
                 ->with('success', 'Vacation updated successfully' . ($recipientEmail ? ' and notification email sent.' : '.'));
         }
 
-        public function destroy(Vacation $vacation)
+        public function destroy($id)
         {
+            $vacation = Vacation::findOrFail($id);
+            
             // If vacation was approved, restore the balance
-            if ($vacation->isApproved()) {
+            if ($vacation->isApproved() && $vacation->employee) {
                 $balance = $vacation->employee->getVacationBalance($vacation->vacation_type_id, now()->year);
                 if ($balance) {
                     $balance->addBalance($vacation->duration_in_days);
@@ -121,7 +123,7 @@
             $vacation->delete();
 
             return redirect()->route('vacations.index')
-                ->with('success', 'Vacation deleted successfully.');
+                ->with('success', 'Vacation request deleted successfully.');
         }
 
         private function handleBalanceAdjustment(Vacation $vacation, string $oldStatus, string $newStatus)

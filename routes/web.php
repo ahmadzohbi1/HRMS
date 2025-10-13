@@ -421,11 +421,13 @@ Route::get('/get-time-logs', [TimeSheetController::class, 'getTimeLogs'])->name(
 Route::post('/verify-pin', [TimeSheetController::class, 'verifyPin'])->name('verify.pin');
 Route::post('/store-temp-file', [HomeController::class, 'storeTempFile'])->name('storeTempFile');
 Route::post('/delete-temp-file', [HomeController::class, 'deleteTempFile'])->name('deleteTempFile');
-Route::get('{any}', [HomeController::class, 'index'])->name('index');
 
-Route::get('/vacation-request/index', [VacationRequestController::class, 'index'])->name('vacation-request.index');
-// New routes for form submission and API
+// Vacation Request Routes (must be before catch-all route)
+Route::get('/vacation-request', [VacationRequestController::class, 'index'])->name('vacation-request.index');
 Route::post('/vacation-request/store', [VacationRequestController::class, 'store'])->name('vacation-request.store');
 Route::get('/api/vacation-balance/{employeeId}/{vacationTypeId}', [VacationRequestController::class, 'getVacationBalance']);
 Route::get('/holiday/calender', [HolidayController::class, 'calendar']);
+
+// Catch-all route - MUST BE LAST
+Route::get('{any}', [HomeController::class, 'index'])->name('index');
 
