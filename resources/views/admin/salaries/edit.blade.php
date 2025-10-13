@@ -69,10 +69,14 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
-                                    <label for="effective_date" class="form-label">Effective Date *</label>
-                                    <input type="date" name="effective_date" id="effective_date" 
+                                    <label for="effective_month" class="form-label">Effective Month & Year *</label>
+                                    <input type="month" name="effective_month" id="effective_month" 
                                            class="form-control @error('effective_date') is-invalid @enderror" 
-                                           value="{{ old('effective_date', $salary->effective_date->format('Y-m-d')) }}" required>
+                                           value="{{ old('effective_month', $salary->effective_date->format('Y-m')) }}" required>
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle"></i>
+                                        Changing to a future month will create a new salary version (history preserved)
+                                    </small>
                                     @error('effective_date')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror

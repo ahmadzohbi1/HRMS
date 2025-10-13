@@ -47,6 +47,12 @@ class Salary extends Model
         return $this->hasMany(Bonus::class, 'salary_id');
     }
 
+    // Relationship with Deductions
+    public function deductions()
+    {
+        return $this->hasMany(Deduction::class, 'salary_id');
+    }
+
     // Relationship with User who created this salary (optional)
     public function createdBy()
     {
@@ -171,7 +177,82 @@ class Salary extends Model
         ]));
     }
 
-    // Boot method to handle automatic versioning
+    /**
+     * Calculate net salary for a specific month
+     */
+    public function getNetSalaryForMonth($year, $month)
+    {
+        // Get advances for the month
+        $advances = $this->advances()
+            ->whereYear('advance_date', $year)
+            ->whereMonth('advance_date', $month)
+            ->whereIn('status', ['approved', 'paid'])
+            ->sum('amount');
+        
+        // Get bonuses for the month
+        $bonuses = $this->bonuses()
+            ->whereYear('bonus_date', $year)
+            ->whereMonth('bonus_date', $month)
+            ->whereIn('status', ['approved', 'paid'])
+            ->sum('amount');
+        
+        // Get deductions for the month
+        $deductions = $this->deductions()
+            ->whereYear('deduction_date', $year)
+            ->whereMonth('deduction_date', $month)
+            ->whereIn('status', ['approved', 'deducted'])
+            ->sum('amount');
+        
+        // Calculate: Fixed Salary + Bonuses - Advances - Deductions
+        return $this->fixed_salary + $bonuses - $advances - $deductions;
+    }
+
+    /**
+     * Get all salary components for a month
+     */
+    public function getSalaryBreakdownForMonth($year, $month)
+    {
+        $advances = $this->advances()
+            ->whereYear('advance_date', $year)
+            ->whereMonth('advance_date', $month)
+            ->whereIn('status', ['approved', 'paid'])
+            ->get();
+        
+        $bonuses = $this->bonuses()
+            ->whereYear('bonus_date', $year)
+            ->whereMonth('bonus_date', $month)
+            ->whereIn('status', ['approved', 'paid'])
+            ->get();
+        
+        $deductions = $this->deductions()
+            ->whereYear('deduction_date', $year)
+            ->whereMonth('deduction_date', $month)
+            ->whereIn('status', ['approved', 'deducted'])
+            ->get();
+        
+        return [
+            'fixed_salary' => $this->fixed_salary,
+            'advances' => $advances,
+            'advances_total' => $advances->sum('amount'),
+            'bonuses' => $bonuses,
+            'bonuses_total' => $bonuses->sum('amount'),
+            'deductions' => $deductions,
+            'deductions_total' => $deductions->sum('amount'),
+            'net_salary' => $this->getNetSalaryForMonth($year, $month),
+        ];
+    }
+
+    /**
+     * Get effective month-year as formatted string
+     */
+    public function getEffectiveMonthYearAttribute()
+    {
+        return $this->effective_date->format('Y-m');
+    }
+
+    /**
+     * Boot method to handle automatic versioning
+     */
     protected static function boot()
     {
         parent::boot();

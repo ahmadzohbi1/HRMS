@@ -70,6 +70,7 @@
                                     <th>Fixed Salary</th>
                                     <th>Advances ({{ $currentDate->format('M Y') }})</th>
                                     <th>Bonuses ({{ $currentDate->format('M Y') }})</th>
+                                    <th>Deductions ({{ $currentDate->format('M Y') }})</th>
                                     <th>Net Salary ({{ $currentDate->format('M Y') }})</th>
                                     <th>Status</th>
                                     <th>Effective Date</th>
@@ -79,7 +80,7 @@
                             <tbody>
                                 @forelse($salaries as $salary)
                                     @php
-                                        // Calculate advances and bonuses for the selected month only
+                                        // Calculate advances, bonuses, and deductions for the selected month only
                                         $monthlyAdvances = $salary->advances()
                                             ->whereMonth('advance_date', $currentDate->month)
                                             ->whereYear('advance_date', $currentDate->year)
@@ -92,9 +93,15 @@
                                             ->whereIn('status', ['approved', 'paid'])
                                             ->sum('amount');
                                         
-                                        $netSalary = $salary->fixed_salary + $monthlyBonuses - $monthlyAdvances;
+                                        $monthlyDeductions = $salary->deductions()
+                                            ->whereMonth('deduction_date', $currentDate->month)
+                                            ->whereYear('deduction_date', $currentDate->year)
+                                            ->whereIn('status', ['approved', 'deducted'])
+                                            ->sum('amount');
                                         
-                                        // Count advances and bonuses for the month
+                                        $netSalary = $salary->fixed_salary + $monthlyBonuses - $monthlyAdvances - $monthlyDeductions;
+                                        
+                                        // Count advances, bonuses, and deductions for the month
                                         $advancesCount = $salary->advances()
                                             ->whereMonth('advance_date', $currentDate->month)
                                             ->whereYear('advance_date', $currentDate->year)
@@ -103,6 +110,11 @@
                                         $bonusesCount = $salary->bonuses()
                                             ->whereMonth('bonus_date', $currentDate->month)
                                             ->whereYear('bonus_date', $currentDate->year)
+                                            ->count();
+                                        
+                                        $deductionsCount = $salary->deductions()
+                                            ->whereMonth('deduction_date', $currentDate->month)
+                                            ->whereYear('deduction_date', $currentDate->year)
                                             ->count();
                                     @endphp
                                     <tr>
@@ -131,6 +143,13 @@
                                             <span class="fw-bold text-success">
                                                 ${{ number_format($salary->fixed_salary, 2) }}
                                             </span>
+                                            @if($salary->version > 1)
+                                                <small class="d-block">
+                                                    <span class="badge bg-info" style="font-size: 0.7em;">
+                                                        Version {{ $salary->version }}
+                                                    </span>
+                                                </small>
+                                            @endif
                                         </td>
                                         <td>
                                             <span class="text-danger">
@@ -157,9 +176,27 @@
                                             @endif
                                         </td>
                                         <td>
+                                            <span class="text-warning">
+                                                ${{ number_format($monthlyDeductions, 2) }}
+                                            </span>
+                                            @if($deductionsCount > 0)
+                                                <small class="d-block text-muted">
+                                                    {{ $deductionsCount }} deduction(s)
+                                                </small>
+                                            @else
+                                                <small class="d-block text-muted">No deductions</small>
+                                            @endif
+                                        </td>
+                                        <td>
                                             <span class="fw-bold {{ $netSalary >= 0 ? 'text-success' : 'text-danger' }}">
                                                 ${{ number_format($netSalary, 2) }}
                                             </span>
+                                            <small class="d-block text-muted">
+                                                = ${{ number_format($salary->fixed_salary, 2) }} 
+                                                @if($monthlyBonuses > 0) +${{ number_format($monthlyBonuses, 2) }} @endif
+                                                @if($monthlyAdvances > 0) -${{ number_format($monthlyAdvances, 2) }} @endif
+                                                @if($monthlyDeductions > 0) -${{ number_format($monthlyDeductions, 2) }} @endif
+                                            </small>
                                         </td>
                                         <td>
                                             <span class="badge bg-{{ $salary->status === 'active' ? 'success' : ($salary->status === 'pending' ? 'warning' : 'secondary') }}">

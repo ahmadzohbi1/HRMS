@@ -112,6 +112,40 @@
         </div>
         
         <div class="col-lg-3 col-6">
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    @php
+                        $totalDeductions = $salary->deductions->whereIn('status', ['approved', 'deducted'])->sum('amount');
+                    @endphp
+                    <h3>${{ number_format($totalDeductions, 2) }}</h3>
+                    <p>Total Deductions</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-minus-circle"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-12">
+            @if(isset($breakdown))
+            <div class="alert alert-primary">
+                <div class="row text-center">
+                    <div class="col">
+                        <h5 class="mb-0">NET SALARY for {{ $currentDate->format('F Y') }}</h5>
+                        <h3 class="mb-0 mt-2 text-primary"><strong>${{ number_format($breakdown['net_salary'], 2) }}</strong></h3>
+                        <small class="text-muted">
+                            Fixed: ${{ number_format($breakdown['fixed_salary'], 2) }} 
+                            + Bonuses: ${{ number_format($breakdown['bonuses_total'], 2) }} 
+                            - Advances: ${{ number_format($breakdown['advances_total'], 2) }}
+                            - Deductions: ${{ number_format($breakdown['deductions_total'], 2) }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            @endif
+        </div>
+        
+        <div class="col-lg-3 col-6 d-none">
             @php
                 $netSalary = $salary->fixed_salary + $totalBonuses - $totalAdvances;
             @endphp
@@ -278,6 +312,141 @@
             </div>
         </div>
     </div>
+
+    <!-- Deductions Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-minus-circle me-2"></i>
+                        Deductions for {{ $currentDate->format('F Y') }}
+                    </h4>
+                    <a href="{{ route('salaries.deductions.create', $salary) }}" class="btn btn-light btn-sm">
+                        <i class="fas fa-plus"></i> Add Deduction
+                    </a>
+                </div>
+                
+                <div class="card-body">
+                    @if($salary->deductions && $salary->deductions->count() > 0)
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Amount</th>
+                                        <th>Date</th>
+                                        <th>Reason</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($salary->deductions as $deduction)
+                                        <tr>
+                                            <td class="text-danger"><strong>-${{ number_format($deduction->amount, 2) }}</strong></td>
+                                            <td>{{ $deduction->deduction_date->format('M d, Y') }}</td>
+                                            <td>
+                                                <span class="badge bg-warning">
+                                                    {{ $deduction->reason }}
+                                                </span>
+                                            </td>
+                                            <td>{{ $deduction->description ?? 'N/A' }}</td>
+                                            <td>
+                                                <span class="badge bg-{{ $deduction->status === 'approved' ? 'success' : ($deduction->status === 'pending' ? 'warning' : 'info') }}">
+                                                    {{ ucfirst($deduction->status) }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group">
+                                                    <a href="{{ route('salaries.deductions.edit', [$salary, $deduction]) }}" 
+                                                       class="btn btn-sm btn-outline-warning">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <form action="{{ route('salaries.deductions.destroy', [$salary, $deduction]) }}" 
+                                                          method="POST" class="d-inline" id="delete-deduction-{{ $deduction->id }}">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                                                onclick="confirmDelete('Deduction').then(result => { if(result) document.getElementById('delete-deduction-{{ $deduction->id }}').submit(); })">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="text-center py-4">
+                            <i class="fas fa-minus-circle fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No deductions found.</p>
+                            <a href="{{ route('salaries.deductions.create', $salary) }}" class="btn btn-danger">
+                                <i class="fas fa-plus"></i> Create First Deduction
+                            </a>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Net Salary Summary -->
+    @if(isset($breakdown))
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-calculator me-2"></i>
+                        Salary Summary for {{ $currentDate->format('F Y') }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8 mx-auto">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <td><strong>Fixed Salary</strong></td>
+                                    <td class="text-end">${{ number_format($breakdown['fixed_salary'], 2) }}</td>
+                                </tr>
+                                <tr class="table-success">
+                                    <td><strong>+ Bonuses</strong></td>
+                                    <td class="text-end text-success">+${{ number_format($breakdown['bonuses_total'], 2) }}</td>
+                                </tr>
+                                <tr class="table-danger">
+                                    <td><strong>- Advances</strong></td>
+                                    <td class="text-end text-danger">-${{ number_format($breakdown['advances_total'], 2) }}</td>
+                                </tr>
+                                <tr class="table-danger">
+                                    <td><strong>- Deductions</strong></td>
+                                    <td class="text-end text-danger">-${{ number_format($breakdown['deductions_total'], 2) }}</td>
+                                </tr>
+                                <tr class="table-primary">
+                                    <td><strong>NET SALARY</strong></td>
+                                    <td class="text-end"><strong class="fs-4">${{ number_format($breakdown['net_salary'], 2) }}</strong></td>
+                                </tr>
+                            </table>
+                            
+                            <div class="text-center mt-3">
+                                <a href="{{ route('salaries.report.monthly', ['salary' => $salary, 'month' => $selectedMonth]) }}" 
+                                   class="btn btn-primary me-2" target="_blank">
+                                    <i class="fas fa-print"></i> Print Monthly Report
+                                </a>
+                                <a href="{{ route('salaries.report.yearly', ['salary' => $salary]) }}" 
+                                   class="btn btn-info" target="_blank">
+                                    <i class="fas fa-file-pdf"></i> Yearly Report
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
 @endsection
 

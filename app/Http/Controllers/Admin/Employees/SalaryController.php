@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Employees\Salary;
 use App\Models\Employees\Advance;
 use App\Models\Employees\Bonus;
+use App\Models\Employees\Deduction;
 use Illuminate\Http\Request;
 use App\Models\Employee;
 use Carbon\Carbon;
@@ -18,10 +19,17 @@ class SalaryController extends Controller
         $selectedMonth = $request->get('month', Carbon::now()->format('Y-m'));
         $currentDate = Carbon::createFromFormat('Y-m', $selectedMonth);
         
-        // Get ALL salaries (not filtered by month) but with filtered advances/bonuses
-        $salaries = Salary::with(['employee'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        // Get unique employees with salaries
+        $employees = Employee::whereHas('salaries')->get();
+        
+        // For each employee, get the applicable salary for the selected month
+        $salaries = collect();
+        foreach ($employees as $employee) {
+            $applicableSalary = Salary::getSalaryForMonth($employee->id, $currentDate->year, $currentDate->month);
+            if ($applicableSalary) {
+                $salaries->push($applicableSalary);
+            }
+        }
         
         // Calculate previous and next months for navigation
         $previousMonth = $currentDate->copy()->subMonth()->format('Y-m');
@@ -44,10 +52,13 @@ class SalaryController extends Controller
         $request->validate([
             'employee_id' => 'required|exists:employees,id',
             'fixed_salary' => 'required|numeric|min:0',
-            'effective_date' => 'required|date',
+            'effective_month' => 'required|date_format:Y-m',
             'status' => 'required|in:active,inactive,pending',
             'notes' => 'nullable|string'
         ]);
+
+        // Convert month-year to first day of month
+        $effectiveDate = Carbon::createFromFormat('Y-m', $request->effective_month)->startOfMonth();
 
         // Deactivate previous salaries for this employee
         if ($request->status === 'active') {
@@ -56,10 +67,17 @@ class SalaryController extends Controller
                 ->update(['status' => 'inactive']);
         }
 
-        Salary::create($request->all());
+        Salary::create([
+            'employee_id' => $request->employee_id,
+            'fixed_salary' => $request->fixed_salary,
+            'effective_date' => $effectiveDate,
+            'status' => $request->status,
+            'notes' => $request->notes,
+            'created_by' => auth()->id(),
+        ]);
 
         return redirect()->route('salaries.index')
-            ->with('success', 'Salary created successfully.');
+            ->with('success', 'Salary created successfully for ' . $effectiveDate->format('F Y'));
     }
 
     public function show(Salary $salary, Request $request)
@@ -68,7 +86,7 @@ class SalaryController extends Controller
         $selectedMonth = $request->get('month', Carbon::now()->format('Y-m'));
         $currentDate = Carbon::createFromFormat('Y-m', $selectedMonth);
         
-        // Load salary with employee and filtered advances/bonuses for the selected month
+        // Load salary with employee and filtered advances/bonuses/deductions for the selected month
         $salary->load([
             'employee',
             'advances' => function($query) use ($currentDate) {
@@ -80,6 +98,11 @@ class SalaryController extends Controller
                 $query->whereMonth('bonus_date', $currentDate->month)
                       ->whereYear('bonus_date', $currentDate->year)
                       ->orderBy('bonus_date', 'desc');
+            },
+            'deductions' => function($query) use ($currentDate) {
+                $query->whereMonth('deduction_date', $currentDate->month)
+                      ->whereYear('deduction_date', $currentDate->year)
+                      ->orderBy('deduction_date', 'desc');
             }
         ]);
         
@@ -87,7 +110,10 @@ class SalaryController extends Controller
         $previousMonth = $currentDate->copy()->subMonth()->format('Y-m');
         $nextMonth = $currentDate->copy()->addMonth()->format('Y-m');
         
-        return view('admin.salaries.show', compact('salary', 'selectedMonth', 'previousMonth', 'nextMonth', 'currentDate'));
+        // Get salary breakdown for the month
+        $breakdown = $salary->getSalaryBreakdownForMonth($currentDate->year, $currentDate->month);
+        
+        return view('admin.salaries.show', compact('salary', 'selectedMonth', 'previousMonth', 'nextMonth', 'currentDate', 'breakdown'));
     }
 
     public function edit(Salary $salary)
@@ -101,12 +127,13 @@ class SalaryController extends Controller
         $request->validate([
             'employee_id' => 'required|exists:employees,id',
             'fixed_salary' => 'required|numeric|min:0',
-            'effective_date' => 'required|date',
+            'effective_month' => 'required|date_format:Y-m',
             'status' => 'required|in:active,inactive,pending',
             'notes' => 'nullable|string'
         ]);
 
-        $newEffectiveDate = Carbon::parse($request->effective_date);
+        // Convert month-year to first day of month
+        $newEffectiveDate = Carbon::createFromFormat('Y-m', $request->effective_month)->startOfMonth();
         $currentDate = Carbon::now();
         $originalEffectiveDate = $salary->effective_date;
 
@@ -116,7 +143,7 @@ class SalaryController extends Controller
             // Create new salary version for future dates
             $newSalary = Salary::createNewVersion($request->employee_id, [
                 'fixed_salary' => $request->fixed_salary,
-                'effective_date' => $request->effective_date,
+                'effective_date' => $newEffectiveDate,
                 'status' => $request->status,
                 'notes' => $request->notes,
                 'created_by' => auth()->id() // Optional: track who made the change
@@ -131,7 +158,7 @@ class SalaryController extends Controller
             // Create new salary version
             $newSalary = Salary::createNewVersion($request->employee_id, [
                 'fixed_salary' => $request->fixed_salary,
-                'effective_date' => $request->effective_date,
+                'effective_date' => $newEffectiveDate,
                 'status' => $request->status,
                 'notes' => $request->notes,
                 'created_by' => auth()->id()
@@ -142,7 +169,13 @@ class SalaryController extends Controller
         }
         else {
             // For same month updates or past month corrections, update the existing record
-            $salary->update($request->all());
+            $salary->update([
+                'employee_id' => $request->employee_id,
+                'fixed_salary' => $request->fixed_salary,
+                'effective_date' => $newEffectiveDate,
+                'status' => $request->status,
+                'notes' => $request->notes,
+            ]);
 
             return redirect()->route('salaries.index')
                 ->with('success', 'Salary record updated successfully.');
@@ -284,5 +317,123 @@ class SalaryController extends Controller
         
         return redirect()->route('salaries.show', ['salary' => $salary, 'month' => $currentMonth])
             ->with('success', 'Bonus deleted successfully.');
+    }
+
+    // Deduction Methods
+    public function createDeduction(Salary $salary)
+    {
+        return view('admin.salaries.deductions.create', compact('salary'));
+    }
+
+    public function storeDeduction(Request $request, Salary $salary)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:0',
+            'deduction_date' => 'required|date',
+            'reason' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'status' => 'required|in:pending,approved,deducted'
+        ]);
+
+        $deduction = new Deduction($request->all());
+        $deduction->salary_id = $salary->id;
+        
+        if (!$request->status) {
+            $deduction->status = 'approved';
+        }
+        
+        $deduction->save();
+
+        $currentMonth = Carbon::parse($request->deduction_date)->format('Y-m');
+
+        return redirect()->route('salaries.show', ['salary' => $salary, 'month' => $currentMonth])
+            ->with('success', 'Deduction created successfully.');
+    }
+
+    public function editDeduction(Salary $salary, Deduction $deduction)
+    {
+        return view('admin.salaries.deductions.edit', compact('salary', 'deduction'));
+    }
+
+    public function updateDeduction(Request $request, Salary $salary, Deduction $deduction)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:0',
+            'deduction_date' => 'required|date',
+            'reason' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'status' => 'required|in:pending,approved,deducted'
+        ]);
+
+        $deduction->update($request->all());
+
+        $currentMonth = Carbon::parse($request->deduction_date)->format('Y-m');
+
+        return redirect()->route('salaries.show', ['salary' => $salary, 'month' => $currentMonth])
+            ->with('success', 'Deduction updated successfully.');
+    }
+
+    public function destroyDeduction(Salary $salary, Deduction $deduction)
+    {
+        $currentMonth = $deduction->deduction_date->format('Y-m');
+        $deduction->delete();
+        
+        return redirect()->route('salaries.show', ['salary' => $salary, 'month' => $currentMonth])
+            ->with('success', 'Deduction deleted successfully.');
+    }
+
+    /**
+     * Generate monthly salary report for an employee
+     */
+    public function monthlyReport(Salary $salary, Request $request)
+    {
+        $selectedMonth = $request->get('month', Carbon::now()->format('Y-m'));
+        $currentDate = Carbon::createFromFormat('Y-m', $selectedMonth);
+        $year = $currentDate->year;
+        $month = $currentDate->month;
+        
+        // Get salary breakdown
+        $breakdown = $salary->getSalaryBreakdownForMonth($year, $month);
+        
+        // Get time logs for the month
+        $timeLogs = $salary->employee->timeLog()
+            ->whereYear('date', $year)
+            ->whereMonth('date', $month)
+            ->orderBy('date')
+            ->get();
+        
+        return view('admin.salaries.reports.monthly', compact('salary', 'breakdown', 'timeLogs', 'currentDate'));
+    }
+
+    /**
+     * Generate yearly salary report for an employee
+     */
+    public function yearlyReport(Salary $salary, Request $request)
+    {
+        $selectedYear = $request->get('year', Carbon::now()->year);
+        
+        // Get all salary versions for this employee in the year
+        $salaryVersions = Salary::where('employee_id', $salary->employee_id)
+            ->whereYear('effective_date', '<=', $selectedYear)
+            ->where(function($query) use ($selectedYear) {
+                $query->whereYear('end_date', '>=', $selectedYear)
+                      ->orWhereNull('end_date');
+            })
+            ->orderBy('effective_date')
+            ->get();
+        
+        // Get monthly breakdown for each month
+        $monthlyData = [];
+        for ($month = 1; $month <= 12; $month++) {
+            $applicableSalary = Salary::getSalaryForMonth($salary->employee_id, $selectedYear, $month);
+            
+            if ($applicableSalary) {
+                $monthlyData[$month] = $applicableSalary->getSalaryBreakdownForMonth($selectedYear, $month);
+                $monthlyData[$month]['salary_version'] = $applicableSalary->version;
+                $monthlyData[$month]['effective_date'] = $applicableSalary->effective_date;
+            }
+        }
+        
+        return view('admin.salaries.reports.yearly', compact('salary', 'salaryVersions', 'monthlyData', 'selectedYear'));
     }
 }

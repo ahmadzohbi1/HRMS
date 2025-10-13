@@ -237,6 +237,33 @@ Route::group(["prefix" => 'dashboard'], function () {
                         ->middleware('permission:delete salaries')
                         ->name('destroy');
                 });
+
+                // Deduction Routes (nested under salaries)
+                Route::prefix('{salary}/deductions')->name('deductions.')->group(function () {
+                    Route::get('/create', [SalaryController::class, 'createDeduction'])
+                        ->middleware('permission:create salaries')
+                        ->name('create');
+                    Route::post('/', [SalaryController::class, 'storeDeduction'])
+                        ->middleware('permission:create salaries')
+                        ->name('store');
+                    Route::get('/{deduction}/edit', [SalaryController::class, 'editDeduction'])
+                        ->middleware('permission:edit salaries')
+                        ->name('edit');
+                    Route::put('/{deduction}', [SalaryController::class, 'updateDeduction'])
+                        ->middleware('permission:edit salaries')
+                        ->name('update');
+                    Route::delete('/{deduction}', [SalaryController::class, 'destroyDeduction'])
+                        ->middleware('permission:delete salaries')
+                        ->name('destroy');
+                });
+
+                // Salary Report Routes
+                Route::get('{salary}/report/monthly', [SalaryController::class, 'monthlyReport'])
+                    ->middleware('permission:view salaries')
+                    ->name('report.monthly');
+                Route::get('{salary}/report/yearly', [SalaryController::class, 'yearlyReport'])
+                    ->middleware('permission:view salaries')
+                    ->name('report.yearly');
             });
 
             /* ================== Shifts ROUTES ================== */
