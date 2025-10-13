@@ -9,7 +9,7 @@
     <meta content="{{ config('app.name') }}" name="author" />
     <meta name="_token" content="{{ csrf_token() }}">
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{asset('assets/images/faviconn.ico') }}">
+    <link rel="shortcut icon" href="{{asset('assets/images/Logo-2.png') }}"  type="image/png">
     @include('layouts.head-css')
 </head>
 
