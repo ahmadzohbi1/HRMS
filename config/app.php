@@ -54,7 +54,7 @@ return [
 
     'url' => env('APP_URL', 'https://office.utopialebanon.org'),
 
-    'asset_url' => env('ASSET_URL', 'http://localhost:8888/hrms/public'),
+    'asset_url' => env('ASSET_URL', 'https://office.utopialebanon.org/public'),
 
     /*
     |--------------------------------------------------------------------------
