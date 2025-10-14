@@ -13,10 +13,18 @@ class PermissionsSeeder extends Seeder
      * @return void
      */
     public function run()
-{
-    Permission::create(['name' => 'create']);
-    Permission::create(['name' => 'edit']);
-    Permission::create(['name' => 'delete']);
-}
+    {
+        // Basic permissions
+        Permission::firstOrCreate(['name' => 'create']);
+        Permission::firstOrCreate(['name' => 'edit']);
+        Permission::firstOrCreate(['name' => 'delete']);
+        
+        // Time Log PIN permissions
+        Permission::firstOrCreate(['name' => 'view time log pin']);
+        Permission::firstOrCreate(['name' => 'create time log pin']);
+        Permission::firstOrCreate(['name' => 'edit time log pin']);
+        Permission::firstOrCreate(['name' => 'update time log pin']);
+        Permission::firstOrCreate(['name' => 'delete time log pin']);
+    }
 
 }
