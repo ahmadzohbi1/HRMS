@@ -14,7 +14,7 @@
                     
                     <span class="logo-lg">
 
-                            <img src="{{ asset('/assets/images/logo-white.png') }}"/>
+                            <img src="{{ asset('/assets/images/logoWhite.png') }}" width="200"/>
                     </span>
                 </a>
 

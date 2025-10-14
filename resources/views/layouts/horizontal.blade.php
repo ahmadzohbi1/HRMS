@@ -14,10 +14,10 @@
 
                 <a href="index" class="logo logo-light">
                     <span class="logo-sm">
-                        <img src="{{ asset ('/assets/images/logo_whitepng') }}" alt="" height="22">
+                        <img src="{{ asset ('/assets/images/logoWhitepng') }}" alt="" height="22">
                     </span>
                     <span class="logo-lg">
-                        <img src="{{ asset ('/assets/images/logo_white.png') }}" alt="" height="19">
+                        <img src="{{ asset ('/assets/images/logoWhite.png') }}" alt="" height="19">
                     </span>
                 </a>
             </div>
