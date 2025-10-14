@@ -52,9 +52,9 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://office.utopialebanon.org'),
+    // 'url' => env('APP_URL', 'https://office.utopialebanon.org'),
 
-    'asset_url' => env('ASSET_URL', 'https://office.utopialebanon.org/public'),
+    // 'asset_url' => env('ASSET_URL', 'https://office.utopialebanon.org/public'),
 
     /*
     |--------------------------------------------------------------------------
