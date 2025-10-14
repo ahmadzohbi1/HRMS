@@ -18,6 +18,14 @@
                     </li>
                 @endcan
 
+                @can('view time log pin')
+                    <li>
+                        <a href="{{ route('timelog-pin.index') }}" class="waves-effect">
+                            <i class="bx bx-lock-alt"></i>
+                            <span key="t-contact">Time Log PIN</span>
+                        </a>
+                    </li>
+                @endcan
 
                 @can('view admins')
                     <li>

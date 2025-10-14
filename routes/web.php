@@ -18,7 +18,8 @@ use App\Http\Controllers\Admin\{
     VacationController,
     VacationTypeController,
     EmployeeVacationBalanceController,
-    HolidayController
+    HolidayController,
+    TimeLogPinController
 };
 use App\Http\Controllers\Admin\Employees\{
     SalaryController,
@@ -416,6 +417,19 @@ Route::group(["prefix" => 'dashboard'], function () {
                     ->name('bulk.store');
             });
 
+            /* ================== Time Log PIN ROUTES ================== */
+            Route::prefix('timelog-pin')->name('timelog-pin.')->group(function () {
+                Route::get('/', [TimeLogPinController::class, 'index'])
+                    ->middleware('permission:view time log pin')
+                    ->name('index');
+                Route::post('/store', [TimeLogPinController::class, 'store'])
+                    ->middleware('permission:create time log pin')
+                    ->name('store');
+                Route::post('/reset', [TimeLogPinController::class, 'reset'])
+                    ->middleware('permission:edit time log pin')
+                    ->name('reset');
+            });
+
             Route::get('/holidays', [HolidayController::class, 'index'])
                 ->middleware('permission:create vacations')
                 ->name('holidays.index');
@@ -441,11 +455,12 @@ Route::group(["prefix" => 'dashboard'], function () {
     });
 });
 Route::get('/auth/email/verify', [RegisterController::class, 'email_verify'])->name('auth.email-verify');
-Route::get('/', [HomeController::class, 'index'])->name('new-home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::post('/verify-pin', [HomeController::class, 'verifyPin'])->name('verify-pin');
+Route::post('/verify-employee-pin', [TimeSheetController::class, 'verifyPin'])->name('verify.pin');
 Route::post('/start-work', [TimeSheetController::class, 'startWork'])->name('start.work');
 Route::post('/stop-work', [TimeSheetController::class, 'stopWork'])->name('stop.work');
 Route::get('/get-time-logs', [TimeSheetController::class, 'getTimeLogs'])->name('get.time.logs');
-Route::post('/verify-pin', [TimeSheetController::class, 'verifyPin'])->name('verify.pin');
 Route::post('/store-temp-file', [HomeController::class, 'storeTempFile'])->name('storeTempFile');
 Route::post('/delete-temp-file', [HomeController::class, 'deleteTempFile'])->name('deleteTempFile');
 

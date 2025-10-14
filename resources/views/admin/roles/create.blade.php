@@ -60,6 +60,9 @@
                                             'hour_rate' => 'Hour Rate Permissions',
                                             'salaries' => 'Salaries Permissions',
                                             'shifts' => 'shifts Permissions',
+                                            'time log pin' => 'Time Log PIN Permissions',
+                                            'vacations' => 'Vacations Permissions',
+                                            'holidays' => 'Holidays Permissions',
                                         ];
                                     @endphp
 

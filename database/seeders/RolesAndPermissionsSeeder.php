@@ -95,6 +95,12 @@ class RolesAndPermissionsSeeder extends Seeder
              'edit holidays',
              'update holidays',
              'delete holidays',
+             // Time Log PIN permissions
+             'view time log pin',
+             'create time log pin',
+             'edit time log pin',
+             'update time log pin',
+             'delete time log pin',
         ];
 
         // Create permissions in the database if they don't exist

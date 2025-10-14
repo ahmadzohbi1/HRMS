@@ -64,6 +64,7 @@ Edit Roles
                                             'warnings' => 'Warnings Permissions',
                                             'vacations' => 'Vacations Permissions',
                                             'holidays' => 'Holidays Permissions',
+                                            'time log pin' => 'Time Log PIN Permissions',
 
                                         ];
                                         @endphp

@@ -6,6 +6,7 @@ use App\Models\Employees\Salary;
 use App\Models\Holiday;
 use App\Models\Vacation;
 use App\Models\TimeLog;
+use App\Models\TimeLogPin;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -14,11 +15,47 @@ class HomeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        // Check if PIN is required
+        $pin = TimeLogPin::getActivePin();
+        
+        // Check if user is unlocked for today
+        $isUnlocked = $request->session()->get('timelog_unlocked_date') === Carbon::today()->toDateString();
+        
+        if ($pin && !$isUnlocked) {
+            // Show PIN lock screen
+            return view('default.pin-lock');
+        }
+        
         $employees = Employee::select('id', 'name', 'image_url')->get(); // Fetch only id and name
         $shifts = Shift::all();
         return view('default.home', compact('employees','shifts'));
+    }
+    
+    /**
+     * Verify PIN and unlock
+     */
+    public function verifyPin(Request $request)
+    {
+        $request->validate([
+            'pin' => 'required|digits:4',
+        ]);
+        
+        $pin = TimeLogPin::getActivePin();
+        
+        if (!$pin) {
+            return redirect()->back()->with('error', 'No PIN configured. Please contact administrator.');
+        }
+        
+        if ($pin->checkPin($request->pin)) {
+            // Store unlock status in session (valid for today only)
+            $request->session()->put('timelog_unlocked_date', Carbon::today()->toDateString());
+            
+            return redirect()->route('home')->with('success', 'Access granted');
+        }
+        
+        return redirect()->back()->with('error', 'Invalid PIN. Please try again.');
     }
     
     public function root()
