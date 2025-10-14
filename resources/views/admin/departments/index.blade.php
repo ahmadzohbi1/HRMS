@@ -49,17 +49,11 @@
                                     <td>{{ $data->name }}</td>
                                     <td>{{ $data->created_at }}</td>
                                     <td>
-                                        <a href="{{ route('departments.edit', ($data->id)) }}"
-                                            class="btn btn-warning btn-md">Edit</a>
-                                        
-                                        <form action="{{ route('departments.destroy', $data->id) }}" method="POST"
-                                            class="d-inline" id="delete-department-{{ $data->id }}">
+                                        <a href="{{ route('departments.edit', ($data->id)) }}" class="btn btn-warning">Edit</a>
+                                        <form action="{{ route('departments.destroy', $data->id) }}" method="POST" class="d-inline" id="delete-department-{{ $data->id }}">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="button" class="btn btn-danger btn-md"
-                                                onclick="confirmDelete('Department').then(result => { if(result) document.getElementById('delete-department-{{ $data->id }}').submit(); })">
-                                                Delete
-                                            </button>
+                                            <button type="button" class="btn btn-danger" onclick="confirmDelete('Department').then(result => { if(result) document.getElementById('delete-department-{{ $data->id }}').submit(); })">Delete</button>
                                         </form>
                                     </td>
                                 </tr>

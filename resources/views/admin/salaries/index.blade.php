@@ -208,11 +208,11 @@
                                             <div class="btn-group" role="group">
                                                 <a href="{{ route('salaries.show', ['salary' => $salary, 'month' => $selectedMonth]) }}" 
                                                    class="btn btn-sm btn-outline-info" title="View Details">
-                                                    <i class="fas fa-eye"></i>
+                                                    <i class="fas fa-eye"></i> View
                                                 </a>
                                                 <a href="{{ route('salaries.edit', $salary) }}" 
                                                    class="btn btn-sm btn-outline-warning" title="Edit">
-                                                    <i class="fas fa-edit"></i>
+                                                    <i class="fas fa-edit"></i> Edit
                                                 </a>
                                                 <form action="{{ route('salaries.destroy', $salary) }}" 
                                                       method="POST" class="d-inline" id="delete-salary-{{ $salary->id }}">
@@ -221,7 +221,7 @@
                                                     <button type="button" class="btn btn-sm btn-outline-danger" 
                                                             title="Delete"
                                                             onclick="confirmDelete('Salary Record').then(result => { if(result) document.getElementById('delete-salary-{{ $salary->id }}').submit(); })">
-                                                        <i class="fas fa-trash"></i>
+                                                        <i class="fas fa-trash"></i> Delete
                                                     </button>
                                                 </form>
                                             </div>

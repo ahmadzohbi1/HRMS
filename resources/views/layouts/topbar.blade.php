@@ -8,24 +8,13 @@
             <!-- LOGO -->
             <div class="navbar-brand-box">
                 
-                <!-- <a href="{{ route('root') }}" class="logo logo-dark">
-                    <span class="logo-sm">
-                        <img src="{{ asset('/assets/images/logo-dark.png') }}" alt="" height="22">
-                    </span>
-                    <span class="logo-lg">
-                        <img src="{{ asset('/assets/images/logo-dark.png') }}" alt="" height="17">
-                    </span>
-                </a>  -->
+                
 
-                 <a href="{{ route('root') }}" class="logo logo-light">
-                    <span class="logo-sm">
-                        <!-- <img src="{{ asset('assets/images/Logo-Whitee.png') }}" alt="" class=""
-                            height="30"> -->
-                    </span>
+                 <a href="https://utopialebanon.org" class="logo logo-light">
+                    
                     <span class="logo-lg">
-                        <!-- <img src="{{ asset('/assets/images/Logo-Whitee.png') }}" alt="" class=""
-                            height="40"> -->
-                            <h1 style="color:white;font-size:50px;margin-top: 1rem">GMS</h1>
+
+                            <img src="{{ asset('/assets/images/logo-white.png') }}"/>
                     </span>
                 </a>
 
