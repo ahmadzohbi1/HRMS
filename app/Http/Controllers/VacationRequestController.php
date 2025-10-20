@@ -92,7 +92,7 @@ class VacationRequestController extends Controller
 
         // Send notification email to admin with action buttons
         try {
-            $adminEmail = config('mail.admin_email', 'ahmadzohby1999@gmail.com');
+            $adminEmail = config('mail.admin_email', 'shafik.abdulrahman@gmail.com');
             Mail::to($adminEmail)
                 ->send(new VacationRequestNotification($vacation));
             \Log::info("Admin notification sent to: {$adminEmail}");
